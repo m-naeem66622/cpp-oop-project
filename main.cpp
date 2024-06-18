@@ -21,6 +21,7 @@ void doctorMenu();
 
 void viewPatientProfile();
 void updatePatientProfile();
+// void viewMedicalHistory();
 void loginPatient();
 void loginDoctor();
 void registerPatient();
@@ -300,6 +301,7 @@ void patientMenu()
             updatePatientProfile();
             break;
         case 3:
+            // viewMedicalHistory();
             break;
         }
 
@@ -341,6 +343,18 @@ void updatePatientProfile()
     std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
     getch();
 }
+
+// void viewMedicalHistory()
+// {
+//     displayHeader();
+//     std::cout << centerString("========================================================================================") << std::endl;
+//     std::cout << centerString("Medical History") << std::endl;
+//     std::cout << centerString("========================================================================================") << std::endl;
+//     // std::cout << patient->getMedicalHistory();
+//     std::cout << centerString("==============================================================================================================") << std::endl;
+//     std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+//     getch();
+// }
 // ----------------------- PATIENT FUNCTIONS END -----------------------
 
 // ----------------------- DOCTOR FUNCTIONS START -----------------------

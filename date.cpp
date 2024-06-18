@@ -23,19 +23,16 @@ Date::Date(std::string date)
         token = date.substr(0, pos);
         if (i == 0)
         {
-            std::cout << "Day: " << token << std::endl;
             day = std::stoi(token);
         }
         else if (i == 1)
         {
-            std::cout << "Month: " << token << std::endl;
             month = std::stoi(token);
         }
         date.erase(0, pos + delimiter.length());
         i++;
     }
 
-    std::cout << "Year: " << date << std::endl;
     year = std::stoi(date);
 }
 

@@ -2,6 +2,7 @@
 #define PATIENT_H
 
 #include <vector>
+#include <iomanip>
 #include "date.h"
 #include "person.h"
 
@@ -14,15 +15,6 @@ struct MedicalHistory
     std::string roomNumber;
     Date createdAt;
     Date lastUpdatedAt;
-
-    // Constructor
-    MedicalHistory(){};
-    MedicalHistory(int id, const std::string &currentMedications, const std::string &allergies,
-                   const std::string &doctorAssigned, const std::string &roomNumber,
-                   const Date &createdAt, const Date &lastUpdatedAt)
-        : id(id), currentMedications(currentMedications), allergies(allergies),
-          doctorAssigned(doctorAssigned), roomNumber(roomNumber),
-          createdAt(createdAt), lastUpdatedAt(lastUpdatedAt) {}
 };
 
 class Patient : public Person
@@ -41,7 +33,6 @@ public:
 
     // Overload the stream insertion operator
     friend std::ostream &operator<<(std::ostream &out, const Patient &patient);
-    friend std::ostream &operator<<(std::ostream &out, const MedicalHistory &history);
     friend std::ostream &operator<<(std::ostream &out, const std::vector<MedicalHistory> &histories);
 
     // TODO - Seems to be bug in generating id for medical history while pushing in to start of vector
@@ -51,9 +42,9 @@ public:
     void addMedicalHistory();                      // Add medical history
     void addMedicalHistory(MedicalHistory history);
     void addMedicalHistory(int id, std::string currentMedications, std::string allergies, std::string doctorAssigned, std::string roomNumber, Date createdAt, Date lastUpdatedAt);
-    int getMedicalHistory(int id) const; // Get medical history by id
-    void updateMedicalHistory(int id);   // Update medical history by id
-    void removeMedicalHistory(int id);   // Remove medical history by id
+    int getMedicalHistoryById(int id) const; // Get medical history by id
+    void updateMedicalHistory(int id);       // Update medical history by id
+    void removeMedicalHistory(int id);       // Remove medical history by id
 
     // Accessors
     std::string getBloodGroup() const;

@@ -25,7 +25,7 @@ void Hospital::readPatientsData()
     if (patientsFile.is_open() && medicalHistoriesFile.is_open())
     {
         std::string line;
-        std::getline(patientsFile, line); // Skip the first line (as it contains the column names)
+        std::getline(patientsFile, line);         // Skip the first line (as it contains the column names)
         std::getline(medicalHistoriesFile, line); // Skip the first line (as it contains the column names)
 
         while (std::getline(patientsFile, line))
@@ -60,8 +60,9 @@ void Hospital::readPatientsData()
                 {
                     Date createdDate(createdAt);
                     Date lastUpdatedDate(lastUpdatedAt);
-                    MedicalHistory history(std::stoi(historyId), currentMedications, allergies, doctorAssigned, roomNumber, createdDate, lastUpdatedDate);
-                    patient.addMedicalHistory(history);
+                    // MedicalHistory history(std::stoi(historyId), currentMedications, allergies, doctorAssigned, roomNumber, createdDate, lastUpdatedDate);
+                    // patient.addMedicalHistory(history);
+                    patient.addMedicalHistory(std::stoi(historyId), currentMedications, allergies, doctorAssigned, roomNumber, createdDate, lastUpdatedDate);
                 }
             }
 
