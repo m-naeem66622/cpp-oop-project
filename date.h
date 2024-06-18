@@ -2,6 +2,7 @@
 #define DATE_H
 
 #include <iostream>
+#include <string>
 
 class Date
 {
@@ -13,6 +14,7 @@ private:
 public:
     Date();
     Date(int day, int month, int year);
+    Date(std::string date);
     void getDate();
     Date getCurrentDate();
     void displayDate() const;

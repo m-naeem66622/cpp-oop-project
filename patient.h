@@ -14,6 +14,15 @@ struct MedicalHistory
     std::string roomNumber;
     Date createdAt;
     Date lastUpdatedAt;
+
+    // Constructor
+    MedicalHistory(){};
+    MedicalHistory(int id, const std::string &currentMedications, const std::string &allergies,
+                   const std::string &doctorAssigned, const std::string &roomNumber,
+                   const Date &createdAt, const Date &lastUpdatedAt)
+        : id(id), currentMedications(currentMedications), allergies(allergies),
+          doctorAssigned(doctorAssigned), roomNumber(roomNumber),
+          createdAt(createdAt), lastUpdatedAt(lastUpdatedAt) {}
 };
 
 class Patient : public Person
@@ -40,6 +49,7 @@ public:
     bool authenticate(std::string password) const; // Authenticate patient
     void getInfoFromUser(int MAX_LENGTH);          // Get patient info from user
     void addMedicalHistory();                      // Add medical history
+    void addMedicalHistory(MedicalHistory history);
     void addMedicalHistory(int id, std::string currentMedications, std::string allergies, std::string doctorAssigned, std::string roomNumber, Date createdAt, Date lastUpdatedAt);
     int getMedicalHistory(int id) const; // Get medical history by id
     void updateMedicalHistory(int id);   // Update medical history by id

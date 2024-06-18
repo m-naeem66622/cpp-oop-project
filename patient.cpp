@@ -90,6 +90,13 @@ void Patient::addMedicalHistory()
 }
 
 // Add medical history - parameterized
+void Patient::addMedicalHistory(MedicalHistory history)
+{
+    // Add the medical history to the start of the vector
+    medicalHistory.insert(medicalHistory.begin(), history);
+}
+
+// Add medical history - parameterized
 void Patient::addMedicalHistory(int id, std::string currentMedications, std::string allergies, std::string doctorAssigned, std::string roomNumber, Date createdAt, Date lastUpdatedAt)
 {
     MedicalHistory history;

@@ -16,18 +16,20 @@ Hospital::Hospital(std::string name, std::string location)
     readPatientsData();
 }
 
+// Read data from patients.csv and medical_histories.csv files
 void Hospital::readPatientsData()
 {
-    // Read From patients.csv
     std::ifstream patientsFile("patients.csv");
-    if (patientsFile.is_open())
+    std::ifstream medicalHistoriesFile("medical_histories.csv");
+
+    if (patientsFile.is_open() && medicalHistoriesFile.is_open())
     {
         std::string line;
+        std::getline(patientsFile, line); // Skip the first line (as it contains the column names)
+        std::getline(medicalHistoriesFile, line); // Skip the first line (as it contains the column names)
+
         while (std::getline(patientsFile, line))
         {
-            if (line.find("ID") != std::string::npos)
-                continue;
-
             std::stringstream ss(line);
             std::string id, name, age, address, phoneNumber, bloodGroup, password;
             std::getline(ss, id, ',');
@@ -38,9 +40,36 @@ void Hospital::readPatientsData()
             std::getline(ss, bloodGroup, ',');
             std::getline(ss, password, ',');
 
-            this->patients.push_back(Patient(std::stoi(id), name, std::stoi(age), address, phoneNumber, password, bloodGroup));
+            Patient patient(std::stoi(id), name, std::stoi(age), address, phoneNumber, password, bloodGroup);
+
+            std::string medicalHistoryLine;
+            while (std::getline(medicalHistoriesFile, medicalHistoryLine))
+            {
+                std::stringstream medicalHistorySS(medicalHistoryLine);
+                std::string historyId, patientId, currentMedications, allergies, doctorAssigned, roomNumber, createdAt, lastUpdatedAt;
+                std::getline(medicalHistorySS, historyId, ',');
+                std::getline(medicalHistorySS, patientId, ',');
+                std::getline(medicalHistorySS, currentMedications, ',');
+                std::getline(medicalHistorySS, allergies, ',');
+                std::getline(medicalHistorySS, doctorAssigned, ',');
+                std::getline(medicalHistorySS, roomNumber, ',');
+                std::getline(medicalHistorySS, createdAt, ',');
+                std::getline(medicalHistorySS, lastUpdatedAt, ',');
+
+                if (std::stoi(patientId) == patient.getId())
+                {
+                    Date createdDate(createdAt);
+                    Date lastUpdatedDate(lastUpdatedAt);
+                    MedicalHistory history(std::stoi(historyId), currentMedications, allergies, doctorAssigned, roomNumber, createdDate, lastUpdatedDate);
+                    patient.addMedicalHistory(history);
+                }
+            }
+
+            this->patients.push_back(patient);
         }
+
         patientsFile.close();
+        medicalHistoriesFile.close();
     }
     else
     {

@@ -12,6 +12,33 @@ Date::Date(int day, int month, int year)
     this->year = year;
 }
 
+Date::Date(std::string date)
+{
+    std::string delimiter = "/";
+    size_t pos = 0;
+    std::string token;
+    int i = 0;
+    while ((pos = date.find(delimiter)) != std::string::npos)
+    {
+        token = date.substr(0, pos);
+        if (i == 0)
+        {
+            std::cout << "Day: " << token << std::endl;
+            day = std::stoi(token);
+        }
+        else if (i == 1)
+        {
+            std::cout << "Month: " << token << std::endl;
+            month = std::stoi(token);
+        }
+        date.erase(0, pos + delimiter.length());
+        i++;
+    }
+
+    std::cout << "Year: " << date << std::endl;
+    year = std::stoi(date);
+}
+
 void Date::getDate()
 {
     std::cout << "Enter the year: ";
