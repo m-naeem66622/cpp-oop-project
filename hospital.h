@@ -14,7 +14,7 @@ private:
 
     // Read data from the files and store it in the vectors
     void readPatientsData();
-    void readDataFromDoctorFile();
+    void readDoctorsData();
 
 public:
     std::string name;
@@ -24,6 +24,7 @@ public:
     Hospital(std::string name, std::string location);
 
     void addPatient(int MAX_LENGTH);
+    std::vector<Patient> getPatients() const;
     Patient *findPatient(int id);
     Patient findAndShowPatient(int id);
     Patient *authenticatePatient(int id, std::string password);

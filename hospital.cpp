@@ -7,13 +7,15 @@ Hospital::Hospital()
     this->name = "UOG Health Center";
     this->location = "University Of Gujrat, Hafiz Hayat Campus, Gujrat, Pakistan";
     readPatientsData();
+    readDoctorsData();
 }
 
 Hospital::Hospital(std::string name, std::string location)
 {
     this->name = name;
     this->location = location;
-    // readPatientsData();
+    readPatientsData();
+    readDoctorsData();
 }
 
 // Read data from patients.csv and medical_histories.csv files
@@ -81,6 +83,68 @@ void Hospital::readPatientsData()
     }
 }
 
+void Hospital::readDoctorsData()
+{
+    std::ifstream doctorsFile("doctors.csv");
+    std::ifstream patientsAssignedFile("patients_assigned.csv");
+
+    if (doctorsFile.is_open() && patientsAssignedFile.is_open())
+    {
+        std::string line;
+        std::getline(doctorsFile, line);          // Skip the first line (as it contains the column names)
+        std::getline(patientsAssignedFile, line); // Skip the first line (as it contains the column names)
+
+        while (std::getline(doctorsFile, line))
+        {
+            if (line.find("ID") != std::string::npos)
+                continue;
+
+            std::stringstream ss(line);
+            std::string id, name, age, address, phoneNumber, specialization, qualifications, yearsOfExperience, password;
+            std::getline(ss, id, ',');
+            std::getline(ss, name, ',');
+            std::getline(ss, age, ',');
+            std::getline(ss, address, ',');
+            std::getline(ss, phoneNumber, ',');
+            std::getline(ss, specialization, ',');
+            std::getline(ss, qualifications, ',');
+            std::getline(ss, yearsOfExperience, ',');
+            std::getline(ss, password, ',');
+
+            Doctor doctor(std::stoi(id), name, std::stoi(age), address, phoneNumber, password, specialization, qualifications, std::stoi(yearsOfExperience));
+
+            std::string patientAssignedLine;
+            while (std::getline(patientsAssignedFile, patientAssignedLine))
+            {
+                std::stringstream patientAssignedSS(patientAssignedLine);
+                std::string patientAssignedId, doctorId, patientId, assignedAt;
+                std::getline(patientAssignedSS, patientAssignedId, ',');
+                std::getline(patientAssignedSS, doctorId, ',');
+                std::getline(patientAssignedSS, patientId, ',');
+                std::getline(patientAssignedSS, assignedAt, ',');
+
+                if (std::stoi(doctorId) == doctor.getId())
+                {
+                    Date assignedDate(assignedAt);
+                    Patient *patient = findPatient(std::stoi(patientId));
+
+                    // if (patient != nullptr)
+                        doctor.assignPatient(std::stoi(patientAssignedId), *patient, assignedDate);
+                }
+            }
+
+            this->doctors.push_back(doctor);
+        }
+
+        doctorsFile.close();
+        patientsAssignedFile.close();
+    }
+    else
+    {
+        std::cout << "Error: Unable to open the file." << std::endl;
+    }
+}
+
 // -------------------------------- PATIENT FUNCTIONS START --------------------------------
 void Hospital::addPatient(int MAX_LENGTH)
 {
@@ -99,6 +163,11 @@ void Hospital::addPatient(int MAX_LENGTH)
     this->patients.push_back(patient);
 
     writePatientsData();
+}
+
+std::vector<Patient> Hospital::getPatients() const
+{
+    return this->patients;
 }
 
 Patient *Hospital::findPatient(int id)
@@ -184,6 +253,8 @@ void Hospital::addDoctor(int MAX_LENGTH)
     Doctor doctor(id, password);
     doctor.getInfoFromUser(MAX_LENGTH);
     this->doctors.push_back(doctor);
+
+    writeDoctorsData();
 }
 
 Doctor *Hospital::findDoctor(int id)

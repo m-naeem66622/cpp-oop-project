@@ -8,13 +8,14 @@ std::ostream &operator<<(std::ostream &out, const Doctor &doctor)
     out << static_cast<const Person &>(doctor);
 
     // Print the doctor information
-    out << "Specialization: " << doctor.specialization << std::endl;
-    out << "Qualifications: " << doctor.qualifications << std::endl;
-    out << "Years of Experience: " << doctor.yearsOfExperience << std::endl;
-    out << "Patients Assigned: " << std::endl;
-    out << doctor.patientsAssigned.size() << std::endl;
+    out << Doctor::centerString("Specialization: " + doctor.specialization, 35, false) << std::endl;
+    out << Doctor::centerString("Qualifications: " + doctor.qualifications, 35, false) << std::endl;
+    out << Doctor::centerString("Years of Experience: " + std::to_string(doctor.yearsOfExperience), 35, false) << std::endl;
+    out << Doctor::centerString("Patients Assigned: " + std::to_string(doctor.patientsAssigned.size()), 35, false) << std::endl;
     return out;
 }
+
+// Overload the << operator to print the vector of patients
 
 // Authenticate doctor
 bool Doctor::authenticate(std::string password) const
@@ -66,11 +67,11 @@ void Doctor::assignPatient(Patient &patient)
 // Assign patient to the doctor - with 3 arguments
 void Doctor::assignPatient(int id, Patient &patient, Date assignedAt)
 {
-    PatientAssigned patientAssigned;
+    PatientAssigned patientAssigned = {id, &patient, assignedAt};
 
-    patientAssigned.id = id;
-    patientAssigned.patient = &patient;
-    patientAssigned.assignedAt = assignedAt;
+    // patientAssigned.id = id;
+    // patientAssigned.patient = &patient;
+    // patientAssigned.assignedAt = assignedAt;
     patientsAssigned.push_back(patientAssigned);
 }
 

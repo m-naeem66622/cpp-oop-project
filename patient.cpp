@@ -11,6 +11,22 @@ std::ostream &operator<<(std::ostream &out, const Patient &patient)
     return out;
 }
 
+// Overload the << operator to print the vector of patients
+std::ostream &operator<<(std::ostream &out, const std::vector<Patient> &patients)
+{
+    out << Patient::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
+    out << Patient::centerString("| " + MedicalHistory::setPadding("ID", 3, 'c') + " | " + MedicalHistory::setPadding("Name", 20, 'c') + " | " + MedicalHistory::setPadding("Age", 3, 'c') + " | " + MedicalHistory::setPadding("Phone Number", 12, 'c') + " | " + MedicalHistory::setPadding("Blood Group", 11, 'c') + " | " + MedicalHistory::setPadding("Address", 34, 'l') + " |") << std::endl;
+    out << Patient::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
+
+
+    for (const auto &patient : patients)
+    {
+        out << Patient::centerString("| " + MedicalHistory::setPadding(std::to_string(patient.id), 3, 'c') + " | " + MedicalHistory::setPadding(patient.name, 20, 'l') + " | " + MedicalHistory::setPadding(std::to_string(patient.age), 3, 'c') + " | " + MedicalHistory::setPadding(patient.phoneNumber, 12, 'c') + " | " + MedicalHistory::setPadding(patient.bloodGroup, 11, 'c') + " | " + MedicalHistory::setPadding(patient.address, 34, 'l') + " |") << std::endl;
+        out << Patient::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
+    }
+    return out;
+}
+
 // Authenticate patient
 bool Patient::authenticate(std::string password) const
 {
@@ -88,7 +104,7 @@ void Patient::addMedicalHistory(int id, std::string currentMedications, std::str
 }
 
 // Get medical history by id
-int Patient::getMedicalHistory(int id) const
+int Patient::getMedicalHistoryById(int id) const
 {
     for (const auto &history : medicalHistory)
     {
@@ -105,7 +121,7 @@ int Patient::getMedicalHistory(int id) const
 // Update medical history by id
 void Patient::updateMedicalHistory(int id)
 {
-    bool found = getMedicalHistory(id);
+    bool found = getMedicalHistoryById(id);
     if (!found)
         return;
 
@@ -119,7 +135,7 @@ void Patient::updateMedicalHistory(int id)
 // Remove medical history by id
 void Patient::removeMedicalHistory(int id)
 {
-    bool found = getMedicalHistory(id);
+    bool found = getMedicalHistoryById(id);
     if (!found)
         return;
 

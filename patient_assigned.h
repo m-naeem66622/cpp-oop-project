@@ -9,9 +9,9 @@ struct PatientAssigned
     int id;
     Patient *patient; // Pointer to the patient
     Date assignedAt;
-};
 
-std::ostream &operator<<(std::ostream &out, const PatientAssigned &patientAssigned);
-std::ostream &operator<<(std::ostream &out, const std::vector<PatientAssigned> &patientsAssigned);
+    friend std::ostream &operator<<(std::ostream &out, const PatientAssigned &patientAssigned);
+    friend std::ostream &operator<<(std::ostream &out, const std::vector<PatientAssigned> &patientsAssigned);
+};
 
 #endif // PATIENT_ASSIGNED_H
