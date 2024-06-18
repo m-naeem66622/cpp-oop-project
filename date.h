@@ -15,9 +15,11 @@ public:
     Date();
     Date(int day, int month, int year);
     Date(std::string date);
-    void getDate();
+    void getDateFromUser();
     Date getCurrentDate();
     void displayDate() const;
+    std::string toString() const;
+
     friend std::ostream &operator<<(std::ostream &out, const Date &date);
 };
 

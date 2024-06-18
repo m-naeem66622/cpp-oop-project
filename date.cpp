@@ -36,7 +36,7 @@ Date::Date(std::string date)
     year = std::stoi(date);
 }
 
-void Date::getDate()
+void Date::getDateFromUser()
 {
     std::cout << "Enter the year: ";
     std::cin >> year;
@@ -60,6 +60,11 @@ Date Date::getCurrentDate()
 void Date::displayDate() const
 {
     std::cout << "Medical History Date: " << day << "/" << month << "/" << year << std::endl;
+}
+
+std::string Date::toString() const
+{
+    return std::to_string(day) + "/" + std::to_string(month) + "/" + std::to_string(year);
 }
 
 std::ostream &operator<<(std::ostream &out, const Date &date)

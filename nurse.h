@@ -4,8 +4,8 @@
 #include <vector>
 #include "date.h"
 #include "person.h"
-#include "patient.h"
 #include "patient_assigned.h"
+#include "patient.h"
 
 class Nurse : public Person
 {

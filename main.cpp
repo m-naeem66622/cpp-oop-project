@@ -12,7 +12,7 @@ std::string centerString(const std::string &str, int width = CONSOLE_WIDTH, bool
 // NOTE: These functions are major focused on the UI/UX of the application
 // not on the actual functionality of the application
 // Actual functionality is implemented in the Classes
-void displayHeader();
+void displayHeader(int len);
 void displayMainMenu();
 void patientStartupMenu();
 void doctorStartupMenu();
@@ -21,7 +21,7 @@ void doctorMenu();
 
 void viewPatientProfile();
 void updatePatientProfile();
-// void viewMedicalHistory();
+void viewMedicalHistory();
 void loginPatient();
 void loginDoctor();
 void registerPatient();
@@ -78,10 +78,10 @@ std::string centerString(const std::string &str, int width, bool center)
     return padding + str;
 }
 
-void displayHeader()
+void displayHeader(int len = MAX_WIDTH)
 {
     system("cls");
-    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString(std::string(len, '=')) << std::endl;
     std::cout << std::endl;
     std::cout << centerString("  _    _  ____   _____   _    _            _ _   _        _____           _             ") << std::endl;
     std::cout << centerString(" | |  | |/ __ \\ / ____| | |  | |          | | | | |      / ____|         | |            ") << std::endl;
@@ -301,7 +301,7 @@ void patientMenu()
             updatePatientProfile();
             break;
         case 3:
-            // viewMedicalHistory();
+            viewMedicalHistory();
             break;
         }
 
@@ -344,17 +344,17 @@ void updatePatientProfile()
     getch();
 }
 
-// void viewMedicalHistory()
-// {
-//     displayHeader();
-//     std::cout << centerString("========================================================================================") << std::endl;
-//     std::cout << centerString("Medical History") << std::endl;
-//     std::cout << centerString("========================================================================================") << std::endl;
-//     // std::cout << patient->getMedicalHistory();
-//     std::cout << centerString("==============================================================================================================") << std::endl;
-//     std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
-//     getch();
-// }
+void viewMedicalHistory()
+{
+    displayHeader(110);
+    std::cout << centerString("==============================================================================================================") << std::endl;
+    std::cout << centerString("Medical History") << std::endl;
+    std::cout << centerString("==============================================================================================================") << std::endl;
+    std::cout << patient->getMedicalHistory();
+    std::cout << centerString("==============================================================================================================") << std::endl;
+    std::cout << centerString("Press any key to continue...", 111, false) << std::endl;
+    getch();
+}
 // ----------------------- PATIENT FUNCTIONS END -----------------------
 
 // ----------------------- DOCTOR FUNCTIONS START -----------------------

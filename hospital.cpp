@@ -13,7 +13,7 @@ Hospital::Hospital(std::string name, std::string location)
 {
     this->name = name;
     this->location = location;
-    readPatientsData();
+    // readPatientsData();
 }
 
 // Read data from patients.csv and medical_histories.csv files
@@ -30,6 +30,9 @@ void Hospital::readPatientsData()
 
         while (std::getline(patientsFile, line))
         {
+            if (line.find("ID") != std::string::npos)
+                continue;
+
             std::stringstream ss(line);
             std::string id, name, age, address, phoneNumber, bloodGroup, password;
             std::getline(ss, id, ',');

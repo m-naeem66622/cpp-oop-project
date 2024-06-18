@@ -11,31 +11,6 @@ std::ostream &operator<<(std::ostream &out, const Patient &patient)
     return out;
 }
 
-// // Overload the << operator to print the medical history
-// std::ostream &operator<<(std::ostream &out, const MedicalHistory &history)
-// {
-//     out << "Medical History ID: " << history.id << std::endl;
-//     out << "Medical History Date: " << history.createdAt << std::endl;
-//     out << "Current Medications: " << history.currentMedications << std::endl;
-//     out << "Allergies: " << history.allergies << std::endl;
-//     out << "Doctor Assigned: " << history.doctorAssigned << std::endl;
-//     out << "Room Number: " << history.roomNumber << std::endl;
-//     return out;
-// }
-
-// Overload the << operator to print the vector of medical history
-std::ostream &operator<<(std::ostream &out, const std::vector<MedicalHistory> &histories)
-{
-    for (const auto &history : histories)
-    {
-        // out << history;
-        out << "Medical History ID: " << history.id;
-        // out << "| " << std::setw(2) << std::left << history.id << " | " << std::setw(20) << std::left << history.currentMedications << " | " << std::setw(20) << std::left << history.allergies << " | " << std::setw(20) << std::left << history.doctorAssigned << " | " << std::setw(4) << std::left << history.roomNumber << " | " << std::setw(10) << std::left << history.createdAt << " | " << std::setw(12) << std::left << history.lastUpdatedAt << " |" << std::endl;
-        // out << "+----+----------------------+----------------------+----------------------+------+------------+--------------+" << std::endl;
-    }
-    return out;
-}
-
 // Authenticate patient
 bool Patient::authenticate(std::string password) const
 {
@@ -45,7 +20,8 @@ bool Patient::authenticate(std::string password) const
 // Add medical history
 MedicalHistory Patient::getMedicalHistoryFromUser()
 {
-    MedicalHistory history;
+    // MedicalHistory history;
+    MedicalHistory history = {0, "", "", "", "", Date(), Date()};
 
     if (medicalHistory.size() == 0)
         history.id = 1;
@@ -102,21 +78,17 @@ void Patient::addMedicalHistory(MedicalHistory history)
 // Add medical history - parameterized
 void Patient::addMedicalHistory(int id, std::string currentMedications, std::string allergies, std::string doctorAssigned, std::string roomNumber, Date createdAt, Date lastUpdatedAt)
 {
-    MedicalHistory history;
-    history.id = id;
-    history.currentMedications = currentMedications;
-    history.allergies = allergies;
-    history.doctorAssigned = doctorAssigned;
-    history.roomNumber = roomNumber;
-    history.createdAt = createdAt;
-    history.lastUpdatedAt = lastUpdatedAt;
+    MedicalHistory history = {id, currentMedications, allergies, doctorAssigned, roomNumber, createdAt, lastUpdatedAt};
 
     // Add the medical history to the start of the vector
+    // if (medicalHistory.size() == 0)
+    //     medicalHistory.push_back(history);
+    // else
     medicalHistory.insert(medicalHistory.begin(), history);
 }
 
 // Get medical history by id
-int Patient::getMedicalHistoryById(int id) const
+int Patient::getMedicalHistory(int id) const
 {
     for (const auto &history : medicalHistory)
     {
@@ -133,7 +105,7 @@ int Patient::getMedicalHistoryById(int id) const
 // Update medical history by id
 void Patient::updateMedicalHistory(int id)
 {
-    bool found = getMedicalHistoryById(id);
+    bool found = getMedicalHistory(id);
     if (!found)
         return;
 
@@ -147,7 +119,7 @@ void Patient::updateMedicalHistory(int id)
 // Remove medical history by id
 void Patient::removeMedicalHistory(int id)
 {
-    bool found = getMedicalHistoryById(id);
+    bool found = getMedicalHistory(id);
     if (!found)
         return;
 

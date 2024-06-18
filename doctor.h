@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "person.h"
-#include "patient.h"
 #include "patient_assigned.h"
 
 class Doctor : public Person
@@ -17,7 +16,6 @@ protected:
 public:
     // Call the parameterized constructor of Person class
     Doctor(int id, std::string password) : Person(id, password) {}
-    Doctor(int id, std::string name, int age, std::string address, std::string phoneNumber, std::string password, std::string specialization, std::string qualifications, int yearsOfExperience) : Person(id, name, age, address, phoneNumber, password), specialization(specialization), qualifications(qualifications), yearsOfExperience(yearsOfExperience) {}
 
     // Overload the stream insertion operator
     friend std::ostream &operator<<(std::ostream &out, const Doctor &doctor);

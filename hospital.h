@@ -1,8 +1,8 @@
 #ifndef HOSPITAL_H
 #define HOSPITAL_H
 
-#include "patient.h"
 #include "doctor.h"
+#include "patient.h"
 #include "nurse.h"
 
 class Hospital
