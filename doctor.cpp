@@ -49,19 +49,43 @@ void Doctor::getInfoFromUser(int MAX_LENGTH)
 }
 
 // Assign patient to the doctor - with 1 argument (default)
-void Doctor::assignPatient(Patient &patient)
+bool Doctor::assignPatient(Patient &patient)
 {
+    // Debugging
+    std::cout << "In to assignPatient\n";
+    if (getAssignedPatient(patient.getId()) != nullptr)
+        return false;
+
+    // Debugging
+    std::cout << "Patient not assigned\n";
+
+    std::cout << "Creating patientAssigned\n";
+
     PatientAssigned patientAssigned;
+
+    // Debugging
+    std::cout << "Created patientAssigned\n";
+
+    patientAssigned.patient = &patient;
+
+    // Debugging
+    std::cout << "Created date\n";
+    patientAssigned.assignedAt = Date();
 
     if (patientsAssigned.size() == 0)
         patientAssigned.id = 1;
     else
         patientAssigned.id = patientsAssigned.back().id + 1;
 
-    patientAssigned.patient = &patient;
-    Date current_date;
-    patientAssigned.assignedAt = current_date;
+    // Debugging
+    std::cout << "ID: " << id << std::endl;
+
     patientsAssigned.push_back(patientAssigned);
+
+    // Debugging
+    std::cout << "Patient assigned\n";
+
+    return true;
 }
 
 // Assign patient to the doctor - with 3 arguments
@@ -69,35 +93,40 @@ void Doctor::assignPatient(int id, Patient &patient, Date assignedAt)
 {
     PatientAssigned patientAssigned = {id, &patient, assignedAt};
 
-    // patientAssigned.id = id;
-    // patientAssigned.patient = &patient;
-    // patientAssigned.assignedAt = assignedAt;
     patientsAssigned.push_back(patientAssigned);
 }
 
-// Get patient assigned by id
-int Doctor::getAssignedPatient(int id) const
+// Get assigned patient by id
+Patient *Doctor::getAssignedPatient(int patientId) const
 {
     for (const auto &patientAssigned : patientsAssigned)
     {
-        if (patientAssigned.id == id)
+        if (patientAssigned.patient->getId() == patientId)
         {
-            std::cout << patientAssigned;
-            return 1; // 1 if found
+            // Debugging
+            // std::cout << "Patient found\n";
+            return patientAssigned.patient;
         }
     }
-    std::cout << "Patient not found." << std::endl;
-    return 0; // 0 if not found
+
+    // Debugging
+    std::cout << "Patient not found\n";
+    return nullptr;
 }
 
 // Unassign patient from the doctor
-void Doctor::unassignPatient(int id)
+bool Doctor::unassignPatient(int patientId)
 {
-    bool found = getAssignedPatient(id);
-    if (!found)
-        return;
+    for (auto it = patientsAssigned.begin(); it != patientsAssigned.end(); ++it)
+    {
+        if (it->patient->getId() == patientId)
+        {
+            patientsAssigned.erase(it);
+            return true;
+        }
+    }
 
-    patientsAssigned.erase(patientsAssigned.begin() + id - 1);
+    return false;
 }
 
 // Accessors

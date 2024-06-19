@@ -23,10 +23,10 @@ public:
 
     bool authenticate(std::string password) const; // Authenticate doctor
     void getInfoFromUser(int MAX_LENGTH);          // Get doctor info from user
-    void assignPatient(Patient &patient);          // Assign patient to the doctor
+    bool assignPatient(Patient &patient);          // Assign patient to the doctor
     void assignPatient(int id, Patient &patient, Date assignedAt);
-    int getAssignedPatient(int id) const;          // Get patient assigned by id
-    void unassignPatient(int id);                  // Unassign patient from the doctor
+    Patient *getAssignedPatient(int patientId) const; // Get assigned patient by id
+    bool unassignPatient(int id);              // Unassign patient from the doctor
 
     // Accessors
     std::string getSpecialization() const;

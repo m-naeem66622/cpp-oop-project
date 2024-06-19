@@ -2,7 +2,7 @@
 
 Date::Date()
 {
-    getCurrentDate();
+    *this = getCurrentDate();
 }
 
 Date::Date(int day, int month, int year)
@@ -48,7 +48,8 @@ void Date::getDateFromUser()
 
 Date Date::getCurrentDate()
 {
-    Date date;
+    // Debugging
+    Date date(0, 0, 0);
     time_t now = time(0);
     tm *ltm = localtime(&now);
     date.year = 1900 + ltm->tm_year;

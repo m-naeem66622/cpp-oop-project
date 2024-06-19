@@ -18,7 +18,6 @@ std::ostream &operator<<(std::ostream &out, const std::vector<Patient> &patients
     out << Patient::centerString("| " + MedicalHistory::setPadding("ID", 3, 'c') + " | " + MedicalHistory::setPadding("Name", 20, 'c') + " | " + MedicalHistory::setPadding("Age", 3, 'c') + " | " + MedicalHistory::setPadding("Phone Number", 12, 'c') + " | " + MedicalHistory::setPadding("Blood Group", 11, 'c') + " | " + MedicalHistory::setPadding("Address", 34, 'l') + " |") << std::endl;
     out << Patient::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
 
-
     for (const auto &patient : patients)
     {
         out << Patient::centerString("| " + MedicalHistory::setPadding(std::to_string(patient.id), 3, 'c') + " | " + MedicalHistory::setPadding(patient.name, 20, 'l') + " | " + MedicalHistory::setPadding(std::to_string(patient.age), 3, 'c') + " | " + MedicalHistory::setPadding(patient.phoneNumber, 12, 'c') + " | " + MedicalHistory::setPadding(patient.bloodGroup, 11, 'c') + " | " + MedicalHistory::setPadding(patient.address, 34, 'l') + " |") << std::endl;
@@ -42,24 +41,24 @@ MedicalHistory Patient::getMedicalHistoryFromUser()
     if (medicalHistory.size() == 0)
         history.id = 1;
     else
-        history.id = medicalHistory.front().id - 1;
+        history.id = medicalHistory.front().id + 1;
 
     Date current_date;
 
     history.createdAt = current_date;
     history.lastUpdatedAt = current_date;
 
-    std::cout << "Enter the current medications: ";
+    std::cout << centerString("Enter the current medications: ", 35, false);
     std::cin.ignore();
     std::getline(std::cin, history.currentMedications);
 
-    std::cout << "Enter the allergies: ";
+    std::cout << centerString("Enter the allergies: ", 35, false);
     std::getline(std::cin, history.allergies);
 
-    std::cout << "Enter the doctor assigned: ";
+    std::cout << centerString("Enter the doctor assigned: ", 35, false);
     std::getline(std::cin, history.doctorAssigned);
 
-    std::cout << "Enter the room number: ";
+    std::cout << centerString("Enter the room number: ", 35, false);
     std::getline(std::cin, history.roomNumber);
 
     return history;
