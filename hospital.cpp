@@ -1,6 +1,7 @@
 #include "hospital.h"
 #include <fstream>
 #include <sstream>
+#include <conio.h>
 
 Hospital::Hospital()
 {
@@ -27,8 +28,7 @@ void Hospital::readPatientsData()
     if (patientsFile.is_open() && medicalHistoriesFile.is_open())
     {
         std::string line;
-        std::getline(patientsFile, line);         // Skip the first line (as it contains the column names)
-        std::getline(medicalHistoriesFile, line); // Skip the first line (as it contains the column names)
+        std::getline(patientsFile, line); // Skip the first line (as it contains the column names)
 
         while (std::getline(patientsFile, line))
         {
@@ -36,6 +36,9 @@ void Hospital::readPatientsData()
                 continue;
 
             std::stringstream ss(line);
+            // Debugging
+            std::cout << "patientFile line: " << line << std::endl;
+
             std::string id, name, age, address, phoneNumber, bloodGroup, password;
             std::getline(ss, id, ',');
             std::getline(ss, name, ',');
@@ -47,10 +50,22 @@ void Hospital::readPatientsData()
 
             Patient patient(std::stoi(id), name, std::stoi(age), address, phoneNumber, password, bloodGroup);
 
+            // Reset the file stream's internal pointer to the beginning of the file
+            medicalHistoriesFile.clear();                 // Clear any error flags
+            medicalHistoriesFile.seekg(0, std::ios::beg); // Move the pointer to the beginning
+
             std::string medicalHistoryLine;
+            std::getline(medicalHistoriesFile, medicalHistoryLine); // Skip the first line (as it contains the column names)
+
             while (std::getline(medicalHistoriesFile, medicalHistoryLine))
             {
+                if (medicalHistoryLine.find("ID") != std::string::npos)
+                    continue;
+
                 std::stringstream medicalHistorySS(medicalHistoryLine);
+                // Debugging
+                std::cout << "medicalHistoryLine: " << medicalHistoryLine << std::endl;
+
                 std::string historyId, patientId, currentMedications, allergies, doctorAssigned, roomNumber, createdAt, lastUpdatedAt;
                 std::getline(medicalHistorySS, historyId, ',');
                 std::getline(medicalHistorySS, patientId, ',');
@@ -81,6 +96,8 @@ void Hospital::readPatientsData()
     {
         std::cout << "Error: Unable to open the file." << std::endl;
     }
+
+    getch();
 }
 
 void Hospital::readDoctorsData()
@@ -92,7 +109,6 @@ void Hospital::readDoctorsData()
     {
         std::string line;
         std::getline(doctorsFile, line);          // Skip the first line (as it contains the column names)
-        std::getline(patientsAssignedFile, line); // Skip the first line (as it contains the column names)
 
         while (std::getline(doctorsFile, line))
         {
@@ -113,9 +129,18 @@ void Hospital::readDoctorsData()
 
             Doctor doctor(std::stoi(id), name, std::stoi(age), address, phoneNumber, password, specialization, qualifications, std::stoi(yearsOfExperience));
 
+            // Reset the file stream's internal pointer to the beginning of the file
+            patientsAssignedFile.clear();                 // Clear any error flags
+            patientsAssignedFile.seekg(0, std::ios::beg); // Move the pointer to the beginning
+
             std::string patientAssignedLine;
+            std::getline(patientsAssignedFile, patientAssignedLine); // Skip the first line (as it contains the column names)
+
             while (std::getline(patientsAssignedFile, patientAssignedLine))
             {
+                if (patientAssignedLine.find("ID") != std::string::npos)
+                    continue;
+                
                 std::stringstream patientAssignedSS(patientAssignedLine);
                 std::string patientAssignedId, doctorId, patientId, assignedAt;
                 std::getline(patientAssignedSS, patientAssignedId, ',');
@@ -129,7 +154,7 @@ void Hospital::readDoctorsData()
                     Patient *patient = findPatient(std::stoi(patientId));
 
                     // if (patient != nullptr)
-                        doctor.assignPatient(std::stoi(patientAssignedId), *patient, assignedDate);
+                    doctor.assignPatient(std::stoi(patientAssignedId), *patient, assignedDate);
                 }
             }
 
@@ -219,7 +244,7 @@ void Hospital::writePatientsData()
 
         for (const auto &patient : this->patients)
         {
-            patientsFile << patient.getId() << "," << patient.getName() << "," << patient.getAge() << "," << patient.getAddress() << "," << patient.getPhoneNumber() << "," << patient.getBloodGroup() << patient.getPassword() << "\n";
+            patientsFile << patient.getId() << "," << patient.getName() << "," << patient.getAge() << "," << patient.getAddress() << "," << patient.getPhoneNumber() << "," << patient.getBloodGroup() << "," << patient.getPassword() << "\n";
 
             for (const auto &history : patient.getMedicalHistory())
             {

@@ -59,20 +59,20 @@ struct MedicalHistory
         }
         return out;
     }
+
+    friend std::ostream &operator<<(std::ostream &out, const MedicalHistory &history)
+    {
+        out << centerString("ID: " + std::to_string(history.id), 35, false) << std::endl;
+        out << centerString("Current Medications: " + history.currentMedications, 35, false) << std::endl;
+        out << centerString("Allergies: " + history.allergies, 35, false) << std::endl;
+        out << centerString("Doctor Assigned: " + history.doctorAssigned, 35, false) << std::endl;
+        out << centerString("Room Number: " + history.roomNumber, 35, false) << std::endl;
+        out << centerString("Created At: " + history.createdAt.toString(), 35, false) << std::endl;
+        out << centerString("Last Updated At: " + history.lastUpdatedAt.toString(), 35, false) << std::endl;
+
+        return out;
+    }
 };
-
-// std::ostream &operator<<(std::ostream &out, const MedicalHistory &history)
-// {
-//     out << "ID: " << history.id << std::endl;
-//     out << "Current Medications: " << history.currentMedications << std::endl;
-//     out << "Allergies: " << history.allergies << std::endl;
-//     out << "Doctor Assigned: " << history.doctorAssigned << std::endl;
-//     out << "Room Number: " << history.roomNumber << std::endl;
-//     out << "Created At: " << history.createdAt << std::endl;
-//     out << "Last Updated At: " << history.lastUpdatedAt << std::endl;
-
-//     return out;
-// }
 
 class Patient : public Person
 {
@@ -81,7 +81,7 @@ protected:
     std::vector<MedicalHistory> medicalHistory;
 
 private:
-    MedicalHistory getMedicalHistoryFromUser(); // Get medical history from user
+    MedicalHistory getMedicalHistoryFromUser(bool isNew); // Get medical history from user
 
 public:
     // Call the parameterized constructor of Person class
@@ -96,12 +96,12 @@ public:
 
     bool authenticate(std::string password) const; // Authenticate patient
     void getInfoFromUser(int MAX_LENGTH);          // Get patient info from user
-    void addMedicalHistory();                      // Add medical history
+    void addMedicalHistory(std::string doctor);    // Add medical history
     void addMedicalHistory(MedicalHistory history);
     void addMedicalHistory(int id, std::string currentMedications, std::string allergies, std::string doctorAssigned, std::string roomNumber, Date createdAt, Date lastUpdatedAt);
-    int getMedicalHistoryById(int id) const; // Get medical history by id
-    void updateMedicalHistory(int id);       // Update medical history by id
-    void removeMedicalHistory(int id);       // Remove medical history by id
+    MedicalHistory *getMedicalHistoryById(int id) const;              // Get medical history by id
+    MedicalHistory *updateMedicalHistory(int id, std::string doctor); // Update medical history by id
+    MedicalHistory *removeMedicalHistory(int id);                     // Remove medical history by id
 
     // Accessors
     std::string getBloodGroup() const;

@@ -51,25 +51,11 @@ void Doctor::getInfoFromUser(int MAX_LENGTH)
 // Assign patient to the doctor - with 1 argument (default)
 bool Doctor::assignPatient(Patient &patient)
 {
-    // Debugging
-    std::cout << "In to assignPatient\n";
     if (getAssignedPatient(patient.getId()) != nullptr)
         return false;
 
-    // Debugging
-    std::cout << "Patient not assigned\n";
-
-    std::cout << "Creating patientAssigned\n";
-
     PatientAssigned patientAssigned;
-
-    // Debugging
-    std::cout << "Created patientAssigned\n";
-
     patientAssigned.patient = &patient;
-
-    // Debugging
-    std::cout << "Created date\n";
     patientAssigned.assignedAt = Date();
 
     if (patientsAssigned.size() == 0)
@@ -77,13 +63,7 @@ bool Doctor::assignPatient(Patient &patient)
     else
         patientAssigned.id = patientsAssigned.back().id + 1;
 
-    // Debugging
-    std::cout << "ID: " << id << std::endl;
-
     patientsAssigned.push_back(patientAssigned);
-
-    // Debugging
-    std::cout << "Patient assigned\n";
 
     return true;
 }
@@ -103,14 +83,10 @@ Patient *Doctor::getAssignedPatient(int patientId) const
     {
         if (patientAssigned.patient->getId() == patientId)
         {
-            // Debugging
-            // std::cout << "Patient found\n";
             return patientAssigned.patient;
         }
     }
 
-    // Debugging
-    std::cout << "Patient not found\n";
     return nullptr;
 }
 

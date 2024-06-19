@@ -33,10 +33,9 @@ bool Patient::authenticate(std::string password) const
 }
 
 // Add medical history
-MedicalHistory Patient::getMedicalHistoryFromUser()
+MedicalHistory Patient::getMedicalHistoryFromUser(bool isNew = true)
 {
-    // MedicalHistory history;
-    MedicalHistory history = {0, "", "", "", "", Date(), Date()};
+    MedicalHistory history;
 
     if (medicalHistory.size() == 0)
         history.id = 1;
@@ -44,8 +43,8 @@ MedicalHistory Patient::getMedicalHistoryFromUser()
         history.id = medicalHistory.front().id + 1;
 
     Date current_date;
-
-    history.createdAt = current_date;
+    if (isNew)
+        history.createdAt = current_date;
     history.lastUpdatedAt = current_date;
 
     std::cout << centerString("Enter the current medications: ", 35, false);
@@ -55,8 +54,8 @@ MedicalHistory Patient::getMedicalHistoryFromUser()
     std::cout << centerString("Enter the allergies: ", 35, false);
     std::getline(std::cin, history.allergies);
 
-    std::cout << centerString("Enter the doctor assigned: ", 35, false);
-    std::getline(std::cin, history.doctorAssigned);
+    // std::cout << centerString("Enter the doctor assigned: ", 35, false);
+    // std::getline(std::cin, history.doctorAssigned);
 
     std::cout << centerString("Enter the room number: ", 35, false);
     std::getline(std::cin, history.roomNumber);
@@ -75,9 +74,11 @@ void Patient::getInfoFromUser(int MAX_LENGTH)
 }
 
 // Add medical history - default
-void Patient::addMedicalHistory()
+void Patient::addMedicalHistory(std::string doctor)
 {
     MedicalHistory history = getMedicalHistoryFromUser();
+
+    history.doctorAssigned = doctor;
 
     // Add the medical history to the start of the vector
     medicalHistory.insert(medicalHistory.begin(), history);
@@ -103,42 +104,68 @@ void Patient::addMedicalHistory(int id, std::string currentMedications, std::str
 }
 
 // Get medical history by id
-int Patient::getMedicalHistoryById(int id) const
+MedicalHistory *Patient::getMedicalHistoryById(int id) const
 {
     for (const auto &history : medicalHistory)
     {
         if (history.id == id)
-        {
-            // std::cout << history;
-            return 1; // 1 if found
-        }
+            return const_cast<MedicalHistory *>(&history);
     }
-    std::cout << "Medical history not found." << std::endl;
-    return 0; // 0 if not found
+    return nullptr;
 }
 
 // Update medical history by id
-void Patient::updateMedicalHistory(int id)
+MedicalHistory *Patient::updateMedicalHistory(int id, std::string doctor)
 {
-    bool found = getMedicalHistoryById(id);
-    if (!found)
-        return;
+    // Get the medical history by id
+    MedicalHistory *history = getMedicalHistoryById(id);
 
-    std::cout << "CURRENT MEDICAL HISTORY" << std::endl;
-    // std::cout << medicalHistory[id - 1];
-    std::cout << std::endl
-              << "UPDATE MEDICAL HISTORY" << std::endl;
-    medicalHistory[id - 1] = getMedicalHistoryFromUser();
+    // Hold the creation date to update the history object
+    Date createdAt = history->createdAt;
+
+    if (history == nullptr)
+        return nullptr;
+
+    MedicalHistory updatedHistory = getMedicalHistoryFromUser(false);
+
+    updatedHistory.createdAt = createdAt;
+    updatedHistory.doctorAssigned = doctor;
+
+    // Update the medical history
+    *history = updatedHistory;
+
+    return history;
 }
 
 // Remove medical history by id
-void Patient::removeMedicalHistory(int id)
+MedicalHistory *Patient::removeMedicalHistory(int id)
 {
-    bool found = getMedicalHistoryById(id);
-    if (!found)
-        return;
+    // Get the medical history by id
+    MedicalHistory *history = getMedicalHistoryById(id);
 
-    medicalHistory.erase(medicalHistory.begin() + id - 1);
+    if (history == nullptr)
+        return nullptr;
+
+    // Remove the medical history
+    // medicalHistory.erase(std::remove_if(medicalHistory.begin(), medicalHistory.end(), [id](const MedicalHistory &history) { return history.id == id; }), medicalHistory.end());
+
+    // auto it = std::find_if(medicalHistory.begin(), medicalHistory.end(), [id](const MedicalHistory &history) { return history.id == id; });
+    
+    // if (it != medicalHistory.end())
+    // {
+    //     medicalHistory.erase(it);
+    // }
+
+    for (auto it = medicalHistory.begin(); it != medicalHistory.end(); ++it)
+    {
+        if (it->id == id)
+        {
+            medicalHistory.erase(it);
+            break;
+        }
+    }
+
+    return history;
 }
 
 // Accessors

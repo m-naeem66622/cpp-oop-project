@@ -19,6 +19,8 @@ void doctorStartupMenu();
 void patientMenu();
 void doctorMenu();
 void managePatientsMenu();
+void manageAssignedPatientsMenu();
+void manageMedicalHistoryMenu();
 
 void viewPatientProfile();
 void viewDoctorProfile();
@@ -29,12 +31,16 @@ void loginPatient();
 void loginDoctor();
 void registerPatient();
 void registerDoctor();
-void viewMedicalHistory();
 void viewAllPatients();
 void selectPatient();
+void viewMedicalHistory();
+bool checkPatientAssigned(std::string str);
 bool checkPatientIsNotNull(std::string str);
 void assignPatient();
 void unassignPatient();
+void selectMedicalHistory();
+bool checkMedicalHistoryIsNotNull(std::string str);
+void viewSelectedMedicalHistory();
 void addMedicalHistory();
 void updateMedicalHistory();
 void deleteMedicalHistory();
@@ -56,9 +62,11 @@ void deleteMedicalHistory();
 // }
 Hospital hospital;
 
-// To hold the loggedin user as pointer
+// To hold the crendentails or loggedin state of user as pointer
 Patient *patient = nullptr;
 Doctor *doctor = nullptr;
+
+MedicalHistory *historyPtr = nullptr;
 
 int main()
 {
@@ -323,6 +331,10 @@ void viewPatientProfile()
     std::cout << centerString("========================================================================================") << std::endl;
     std::cout << centerString("Patient Profile") << std::endl;
     std::cout << centerString("========================================================================================") << std::endl;
+
+    if (!checkPatientIsNotNull("Failed to view profile!"))
+        return;
+
     std::cout << *patient;
     std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
     std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
@@ -361,9 +373,7 @@ void viewMedicalHistory()
     std::cout << centerString("======================================================================================================================") << std::endl;
 
     if (!checkPatientIsNotNull("Failed to view medical history!"))
-    {
         return;
-    }
 
     if (patient->getMedicalHistory().empty())
     {
@@ -399,13 +409,23 @@ void viewAllPatients()
 
 void selectPatient()
 {
-    displayHeader();
-    std::cout << centerString("========================================================================================") << std::endl;
+    displayHeader(110);
+    std::cout << centerString("==============================================================================================================") << std::endl;
     std::cout << centerString("Select Patient") << std::endl;
-    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("==============================================================================================================") << std::endl;
+
+    if (hospital.getPatients().empty())
+    {
+        std::cout << centerString("No patients found.") << std::endl;
+        std::cout << centerString("--------------------------------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+        getch();
+        return;
+    }
+
     std::cout << hospital.getPatients();
-    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
-    std::cout << centerString("Enter the ID of the patient you want to select: ", MAX_WIDTH, false);
+    std::cout << centerString("--------------------------------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Enter the ID of the patient you want to select: ");
 
     int id;
     while (!(std::cin >> id) || hospital.findPatient(id) == nullptr)
@@ -420,10 +440,248 @@ void selectPatient()
 
     patient = hospital.findPatient(id);
 
+    std::cout << centerString("--------------------------------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Patient selected successfully!", 111, false) << std::endl;
+    std::cout << centerString("Press any key to continue...", 111, false) << std::endl;
+    getch();
+}
+
+bool checkPatientIsNotNull(std::string str)
+{
+    if (patient == nullptr)
+    {
+        std::cout << centerString("For this operation, you need to select a patient first.") << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString(str, MAX_WIDTH, false) << std::endl;
+        std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+        getch();
+        return false;
+    }
+    return true;
+}
+
+void manageMedicalHistoryMenu()
+{
+    const unsigned MAX_LENGTH = 35;
+    const unsigned MAX_CHOICES = 7;
+    int choice;
+    do
+    {
+        displayHeader();
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("Manage Medical History Menu") << std::endl;
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("1. View Medical History", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("2. Select Medical History", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("3. View Selected Medical History", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("4. Add Medical History", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("5. Update Medical History", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("6. Delete Medical History", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("7. Go Back", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Please enter your choice (1-7): ", MAX_LENGTH, false);
+
+        while (!(std::cin >> choice) || choice > MAX_CHOICES)
+        {
+            std::cout << std::endl
+                      << centerString("Invalid input. Please enter a valid choice: ");
+            // Clear error flag
+            std::cin.clear();
+            // Ignore the rest of the current input line up to newline
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+        switch (choice)
+        {
+        case 1:
+            viewMedicalHistory();
+            break;
+        case 2:
+            selectMedicalHistory();
+            break;
+        case 3:
+            viewSelectedMedicalHistory();
+            break;
+        case 4:
+            addMedicalHistory();
+            break;
+        case 5:
+            updateMedicalHistory();
+            break;
+        case 6:
+            deleteMedicalHistory();
+            break;
+        case 7:
+            historyPtr = nullptr; // Reset the selected history
+        }
+
+    } while (choice != MAX_CHOICES);
+}
+
+void selectMedicalHistory()
+{
+    displayHeader(118);
+    std::cout << centerString("======================================================================================================================") << std::endl;
+    std::cout << centerString("Select Medical History") << std::endl;
+    std::cout << centerString("======================================================================================================================") << std::endl;
+
+    if (!checkPatientIsNotNull("Failed to select medical history!"))
+        return;
+
+    if (patient->getMedicalHistory().empty())
+    {
+        std::cout << centerString("No medical history found.") << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+        getch();
+        return;
+    }
+
+    std::cout << patient->getMedicalHistory();
+    std::cout << centerString("----------------------------------------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Enter the ID of the medical history you want to select: ");
+
+    int id;
+    while (!(std::cin >> id) || patient->getMedicalHistoryById(id) == nullptr)
+    {
+        std::cout << std::endl
+                  << centerString("Invalid input. Please enter a valid id: ");
+        // Clear error flag
+        std::cin.clear();
+        // Ignore the rest of the current input line up to newline
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
+    historyPtr = patient->getMedicalHistoryById(id);
+
+    std::cout << centerString("----------------------------------------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Medical history selected successfully!", 119, false) << std::endl;
+    std::cout << centerString("Press any key to continue...", 119, false) << std::endl;
+    getch();
+}
+
+bool checkMedicalHistoryIsNotNull(std::string str)
+{
+    if (historyPtr == nullptr)
+    {
+        std::cout << centerString("For this operation, you need to select a medical history first.") << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString(str, MAX_WIDTH, false) << std::endl;
+        std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+        getch();
+        return false;
+    }
+    return true;
+}
+
+void viewSelectedMedicalHistory()
+{
+    displayHeader();
+    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("Selected Medical History") << std::endl;
+    std::cout << centerString("========================================================================================") << std::endl;
+
+    if (!checkPatientIsNotNull("Failed to view medical history!"))
+        return;
+
+    if (!checkMedicalHistoryIsNotNull("Failed to view medical history!"))
+        return;
+
+    std::cout << *historyPtr;
     std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
-    std::cout << centerString("Patient selected successfully!", MAX_WIDTH, false) << std::endl;
     std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
     getch();
+}
+
+void addMedicalHistory()
+{
+    displayHeader();
+    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("Add Medical History") << std::endl;
+    std::cout << centerString("========================================================================================") << std::endl;
+
+    if (!checkPatientIsNotNull("Failed to add medical history!"))
+        return;
+
+    if (!checkPatientAssigned("Failed to add medical history!"))
+        return;
+
+    std::cout << *patient;
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+
+    patient->addMedicalHistory(doctor->getName());
+    hospital.writePatientsData();
+
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Medical history added successfully!", MAX_WIDTH, false) << std::endl;
+    std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+    getch();
+}
+
+void updateMedicalHistory()
+{
+    displayHeader();
+    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("Update Medical History") << std::endl;
+    std::cout << centerString("========================================================================================") << std::endl;
+
+    if (!checkPatientIsNotNull("Failed to add medical history!"))
+        return;
+
+    if (!checkPatientAssigned("Failed to add medical history!"))
+        return;
+
+    if (!checkMedicalHistoryIsNotNull("Failed to update medical history!"))
+        return;
+
+    std::cout << centerString("OLD INFORMATION") << std::endl;
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+    std::cout << *historyPtr;
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("NEW INFORMATION") << std::endl;
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+
+    std::cin.ignore();
+    patient->updateMedicalHistory(historyPtr->id, doctor->getName());
+    hospital.writePatientsData();
+
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Medical history updated successfully!", MAX_WIDTH, false) << std::endl;
+    std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+    getch();
+}
+
+void deleteMedicalHistory()
+{
+    displayHeader();
+    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("Delete Medical History") << std::endl;
+    std::cout << centerString("========================================================================================") << std::endl;
+
+    if (!checkPatientIsNotNull("Failed to delete medical history!"))
+        return;
+
+    if (!checkPatientAssigned("Failed to delete medical history!"))
+        return;
+
+    if (!checkMedicalHistoryIsNotNull("Failed to delete medical history!"))
+        return;
+
+    std::cout << centerString("Are you sure you want to delete the selected medical history? (y/n): ");
+
+    char option;
+    std::cin >> option;
+
+    if (option == 'y' || option == 'Y')
+    {
+        patient->removeMedicalHistory(historyPtr->id);
+        hospital.writePatientsData();
+
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Medical history deleted successfully!", MAX_WIDTH, false) << std::endl;
+        std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+        getch();
+    }
 }
 // ----------------------- PATIENT FUNCTIONS END -----------------------
 
@@ -659,7 +917,7 @@ void viewAssignedPatients()
 void managePatientsMenu()
 {
     const unsigned MAX_LENGTH = 35;
-    const unsigned MAX_CHOICES = 8;
+    const unsigned MAX_CHOICES = 5;
     int choice;
     do
     {
@@ -668,15 +926,12 @@ void managePatientsMenu()
         std::cout << centerString("Manage Patients Menu") << std::endl;
         std::cout << centerString("========================================================================================") << std::endl;
         std::cout << centerString("1. Select Patient", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("2. Assign Patient", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("3. Unassign Patient", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("4. View Medical History", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("5. Add Medical History", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("6. Update Medical History", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("7. Remove Medical History", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("8. Go Back", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("2. View Selected Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("3. Manage Assigned Patients", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("4. Manage Medical History", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("5. Go Back", MAX_LENGTH, false) << std::endl;
         std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
-        std::cout << centerString("Please enter your choice (1-8): ", MAX_LENGTH, false);
+        std::cout << centerString("Please enter your choice (1-5): ", MAX_LENGTH, false);
 
         while (!(std::cin >> choice) || choice > MAX_CHOICES)
         {
@@ -694,33 +949,78 @@ void managePatientsMenu()
             selectPatient();
             break;
         case 2:
-            assignPatient();
+            viewPatientProfile();
             break;
         case 3:
-            unassignPatient();
+            manageAssignedPatientsMenu();
             break;
         case 4:
-            viewMedicalHistory();
+            manageMedicalHistoryMenu();
             break;
         case 5:
-            addMedicalHistory();
+            patient = nullptr; // Reset the selected patient
+        }
+
+    } while (choice != MAX_CHOICES);
+}
+
+void manageAssignedPatientsMenu()
+{
+    const unsigned MAX_LENGTH = 35;
+    const unsigned MAX_CHOICES = 6;
+    int choice;
+    do
+    {
+        displayHeader();
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("Manage Assigned Patients Menu") << std::endl;
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("1. View Assigned Patients", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("2. Select Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("3. View Selected Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("4. Assign Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("5. Unassign Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("6. Go Back", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Please enter your choice (1-6): ", MAX_LENGTH, false);
+
+        while (!(std::cin >> choice) || choice > MAX_CHOICES)
+        {
+            std::cout << std::endl
+                      << centerString("Invalid input. Please enter a valid choice: ");
+            // Clear error flag
+            std::cin.clear();
+            // Ignore the rest of the current input line up to newline
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+        switch (choice)
+        {
+        case 1:
+            viewAssignedPatients();
             break;
-        case 6:
-            // updateMedicalHistory();
+        case 2:
+            selectPatient();
             break;
-        case 7:
-            // removeMedicalHistory();
+        case 3:
+            viewPatientProfile();
+            break;
+        case 4:
+            assignPatient();
+            break;
+        case 5:
+            unassignPatient();
             break;
         }
 
     } while (choice != MAX_CHOICES);
 }
 
-bool checkPatientIsNotNull(std::string str)
+bool checkPatientAssigned(std::string str)
 {
-    if (patient == nullptr)
+    if (doctor->getAssignedPatient(patient->getId()) == nullptr)
     {
-        std::cout << centerString("For this operation, you need to select a patient first.") << std::endl;
+        std::cout << centerString("For this operation, you need to assign a patient first.") << std::endl;
         std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
         std::cout << centerString(str, MAX_WIDTH, false) << std::endl;
         std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
@@ -738,9 +1038,7 @@ void assignPatient()
     std::cout << centerString("========================================================================================") << std::endl;
 
     if (!checkPatientIsNotNull("Failed to assign patient!"))
-    {
         return;
-    }
 
     std::cout << *patient;
 
@@ -761,9 +1059,7 @@ void unassignPatient()
     std::cout << centerString("========================================================================================") << std::endl;
 
     if (!checkPatientIsNotNull("Failed to unassign patient!"))
-    {
         return;
-    }
 
     std::cout << *patient;
 
@@ -772,30 +1068,6 @@ void unassignPatient()
 
     std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
     std::cout << centerString(_isUnassigned ? "Patient unassigned successfully!" : "Patient not assigned!", MAX_WIDTH, false) << std::endl;
-    std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
-    getch();
-}
-
-void addMedicalHistory()
-{
-    displayHeader();
-    std::cout << centerString("========================================================================================") << std::endl;
-    std::cout << centerString("Add Medical History") << std::endl;
-    std::cout << centerString("========================================================================================") << std::endl;
-
-    if (!checkPatientIsNotNull("Failed to add medical history!"))
-    {
-        return;
-    }
-
-    std::cout << *patient;
-    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
-
-    patient->addMedicalHistory();
-    hospital.writePatientsData();
-
-    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
-    std::cout << centerString("Medical history added successfully!", MAX_WIDTH, false) << std::endl;
     std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
     getch();
 }
