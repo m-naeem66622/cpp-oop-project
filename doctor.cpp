@@ -15,8 +15,6 @@ std::ostream &operator<<(std::ostream &out, const Doctor &doctor)
     return out;
 }
 
-// Overload the << operator to print the vector of patients
-
 // Authenticate doctor
 bool Doctor::authenticate(std::string password) const
 {
@@ -28,11 +26,9 @@ void Doctor::getInfoFromUser(int MAX_LENGTH)
 {
     Person::getInfoFromUser(MAX_LENGTH);
 
-    // std::cin.ignore();
     std::cout << centerString("Enter the specialization: ", MAX_LENGTH, false);
     std::getline(std::cin, specialization);
 
-    // std::cin.ignore();
     std::cout << centerString("Enter the qualifications: ", MAX_LENGTH, false);
     std::getline(std::cin, qualifications);
 

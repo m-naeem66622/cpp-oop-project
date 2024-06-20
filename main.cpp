@@ -16,34 +16,45 @@ void displayHeader(int len);
 void displayMainMenu();
 void patientStartupMenu();
 void doctorStartupMenu();
+void nurseStartupMenu();
 void patientMenu();
 void doctorMenu();
+void nurseMenu();
 void managePatientsMenu();
 void manageAssignedPatientsMenu();
 void manageMedicalHistoryMenu();
+void manageNursesMenu();
+void manageAssignedNursesMenu();
 
 void viewPatientProfile();
 void viewDoctorProfile();
+void viewNurseProfile();
 void updatePatientProfile();
 void updateDoctorProfile();
-void viewAssignedPatients();
+void updateNurseProfile();
+void viewAssignedPatients(char from = 'd');
 void loginPatient();
 void loginDoctor();
+void loginNurse();
 void registerPatient();
 void registerDoctor();
+void registerNurse();
 void viewAllPatients();
-void selectPatient();
+void selectPatient(char from = 'd');
 void viewMedicalHistory();
 bool checkPatientAssigned(std::string str);
 bool checkPatientIsNotNull(std::string str);
-void assignPatient();
-void unassignPatient();
+void assignPatient(char from = 'n');
+void unassignPatient(char from = 'n');
 void selectMedicalHistory();
 bool checkMedicalHistoryIsNotNull(std::string str);
 void viewSelectedMedicalHistory();
 void addMedicalHistory();
 void updateMedicalHistory();
 void deleteMedicalHistory();
+void viewAllNurses();
+void selectNurse();
+bool checkNurseIsNotNull(std::string str);
 
 // typedef struct {
 //     int rows, cols;
@@ -60,11 +71,13 @@ void deleteMedicalHistory();
 
 //     return wsz;
 // }
+
 Hospital hospital;
 
 // To hold the crendentails or loggedin state of user as pointer
 Patient *patient = nullptr;
 Doctor *doctor = nullptr;
+Nurse *nurse = nullptr;
 
 MedicalHistory *historyPtr = nullptr;
 
@@ -150,10 +163,10 @@ void displayMainMenu()
             doctorStartupMenu();
             break;
         case 3:
-            // nurseStartupMenu();
+            nurseStartupMenu();
             break;
         case 4:
-            std::cout << "Exiting..." << std::endl;
+            std::cout << centerString("Exiting...", MAX_WIDTH) << std::endl;
             break;
         }
     } while (choice != 4);
@@ -403,11 +416,11 @@ void viewAllPatients()
         std::cout << hospital.getPatients();
     }
     std::cout << centerString("==============================================================================================================") << std::endl;
-    std::cout << centerString("Press any key to continue...", 111, false) << std::endl;
+    std::cout << centerString("Press any key to continue...", 110, false) << std::endl;
     getch();
 }
 
-void selectPatient()
+void selectPatient(char from)
 {
     displayHeader(110);
     std::cout << centerString("==============================================================================================================") << std::endl;
@@ -418,17 +431,25 @@ void selectPatient()
     {
         std::cout << centerString("No patients found.") << std::endl;
         std::cout << centerString("--------------------------------------------------------------------------------------------------------------") << std::endl;
-        std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+        std::cout << centerString("Press any key to continue...", 110, false) << std::endl;
         getch();
         return;
     }
 
-    std::cout << hospital.getPatients();
+    if (from == 'd')
+    {
+        std::cout << hospital.getPatients();
+    }
+    else if (from == 'n')
+    {
+        std::cout << doctor->getPatientsAssigned();
+    }
+
     std::cout << centerString("--------------------------------------------------------------------------------------------------------------") << std::endl;
     std::cout << centerString("Enter the ID of the patient you want to select: ");
 
     int id;
-    while (!(std::cin >> id) || hospital.findPatient(id) == nullptr)
+    while (!(std::cin >> id) || ((from == 'd' ? hospital.findPatient(id) : doctor->getAssignedPatient(id)) == nullptr))
     {
         std::cout << std::endl
                   << centerString("Invalid input. Please enter a valid id: ");
@@ -441,8 +462,8 @@ void selectPatient()
     patient = hospital.findPatient(id);
 
     std::cout << centerString("--------------------------------------------------------------------------------------------------------------") << std::endl;
-    std::cout << centerString("Patient selected successfully!", 111, false) << std::endl;
-    std::cout << centerString("Press any key to continue...", 111, false) << std::endl;
+    std::cout << centerString("Patient selected successfully!", 110, false) << std::endl;
+    std::cout << centerString("Press any key to continue...", 110, false) << std::endl;
     getch();
 }
 
@@ -808,7 +829,7 @@ void registerDoctor()
 void doctorMenu()
 {
     const unsigned MAX_LENGTH = 35;
-    const unsigned MAX_CHOICES = 6;
+    const unsigned MAX_CHOICES = 5;
     int choice;
     do
     {
@@ -818,12 +839,11 @@ void doctorMenu()
         std::cout << centerString("========================================================================================") << std::endl;
         std::cout << centerString("1. View Profile", MAX_LENGTH, false) << std::endl;
         std::cout << centerString("2. Update Profile", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("3. View All Patients", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("4. View Assigned Patients", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("5. Manage Patients", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("6. Go Back", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("3. Manage Patients", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("4. Manage Nurses", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("5. Go Back", MAX_LENGTH, false) << std::endl;
         std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
-        std::cout << centerString("Please enter your choice (1-6): ", MAX_LENGTH, false);
+        std::cout << centerString("Please enter your choice (1-5): ", MAX_LENGTH, false);
 
         while (!(std::cin >> choice) || choice > MAX_CHOICES)
         {
@@ -844,15 +864,12 @@ void doctorMenu()
             updateDoctorProfile();
             break;
         case 3:
-            viewAllPatients();
-            break;
-        case 4:
-            viewAssignedPatients();
-            break;
-        case 5:
             managePatientsMenu();
             break;
-        case 6:
+        case 4:
+            manageNursesMenu();
+            break;
+        case 5:
             doctor = nullptr; // Reset the loggedin user
         }
 
@@ -895,20 +912,42 @@ void updateDoctorProfile()
     getch();
 }
 
-void viewAssignedPatients()
+void viewAssignedPatients(char from)
 {
     displayHeader(110);
     std::cout << centerString("==============================================================================================================") << std::endl;
     std::cout << centerString("Assigned Patients") << std::endl;
     std::cout << centerString("==============================================================================================================") << std::endl;
-    if (doctor->getPatientsAssigned().empty())
+
+    if (from == 'd')
     {
-        std::cout << centerString("No patients assigned.") << std::endl;
+        if (doctor != nullptr)
+        {
+            if (doctor->getPatientsAssigned().empty())
+            {
+                std::cout << centerString("No patients assigned.") << std::endl;
+            }
+            else
+            {
+                std::cout << doctor->getPatientsAssigned();
+            }
+        }
     }
-    else
+    else if (from == 'n')
     {
-        std::cout << doctor->getPatientsAssigned();
+        if (!checkNurseIsNotNull("Failed to view assigned patients!"))
+            return;
+
+        if (nurse->getPatientsAssigned().empty())
+        {
+            std::cout << centerString("No patients assigned.") << std::endl;
+        }
+        else
+        {
+            std::cout << nurse->getPatientsAssigned();
+        }
     }
+
     std::cout << centerString("==============================================================================================================") << std::endl;
     std::cout << centerString("Press any key to continue...", 111, false) << std::endl;
     getch();
@@ -917,7 +956,7 @@ void viewAssignedPatients()
 void managePatientsMenu()
 {
     const unsigned MAX_LENGTH = 35;
-    const unsigned MAX_CHOICES = 5;
+    const unsigned MAX_CHOICES = 6;
     int choice;
     do
     {
@@ -925,13 +964,14 @@ void managePatientsMenu()
         std::cout << centerString("========================================================================================") << std::endl;
         std::cout << centerString("Manage Patients Menu") << std::endl;
         std::cout << centerString("========================================================================================") << std::endl;
-        std::cout << centerString("1. Select Patient", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("2. View Selected Patient", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("3. Manage Assigned Patients", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("4. Manage Medical History", MAX_LENGTH, false) << std::endl;
-        std::cout << centerString("5. Go Back", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("1. View All Patients", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("2. Select Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("3. View Selected Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("4. Manage Assigned Patients", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("5. Manage Medical History", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("6. Go Back", MAX_LENGTH, false) << std::endl;
         std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
-        std::cout << centerString("Please enter your choice (1-5): ", MAX_LENGTH, false);
+        std::cout << centerString("Please enter your choice (1-6): ", MAX_LENGTH, false);
 
         while (!(std::cin >> choice) || choice > MAX_CHOICES)
         {
@@ -946,18 +986,21 @@ void managePatientsMenu()
         switch (choice)
         {
         case 1:
-            selectPatient();
+            viewAllPatients();
             break;
         case 2:
-            viewPatientProfile();
+            selectPatient();
             break;
         case 3:
-            manageAssignedPatientsMenu();
+            viewPatientProfile();
             break;
         case 4:
-            manageMedicalHistoryMenu();
+            manageAssignedPatientsMenu();
             break;
         case 5:
+            manageMedicalHistoryMenu();
+            break;
+        case 6:
             patient = nullptr; // Reset the selected patient
         }
 
@@ -1030,7 +1073,7 @@ bool checkPatientAssigned(std::string str)
     return true;
 }
 
-void assignPatient()
+void assignPatient(char from)
 {
     displayHeader();
     std::cout << centerString("========================================================================================") << std::endl;
@@ -1040,10 +1083,22 @@ void assignPatient()
     if (!checkPatientIsNotNull("Failed to assign patient!"))
         return;
 
+    if (from == 'n' && !checkNurseIsNotNull("Failed to assign patient!"))
+        return;
+
     std::cout << *patient;
 
-    bool _isAssigned = doctor->assignPatient(*patient);
-    hospital.writeDoctorsData();
+    bool _isAssigned = false;
+    if (from == 'd')
+    {
+        _isAssigned = doctor->assignPatient(*patient);
+        hospital.writeDoctorsData();
+    }
+    else if (from == 'n')
+    {
+        _isAssigned = nurse->assignPatient(*patient);
+        hospital.writeNursesData();
+    }
 
     std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
     std::cout << centerString(_isAssigned ? "Patient assigned successfully!" : "Patient already assigned!", MAX_WIDTH, false) << std::endl;
@@ -1051,7 +1106,7 @@ void assignPatient()
     getch();
 }
 
-void unassignPatient()
+void unassignPatient(char from)
 {
     displayHeader();
     std::cout << centerString("========================================================================================") << std::endl;
@@ -1061,10 +1116,25 @@ void unassignPatient()
     if (!checkPatientIsNotNull("Failed to unassign patient!"))
         return;
 
+    if (from == 'n' && !checkNurseIsNotNull("Failed to unassign patient!"))
+        return;
+
     std::cout << *patient;
 
-    bool _isUnassigned = doctor->unassignPatient(patient->getId());
-    hospital.writeDoctorsData();
+    // bool _isUnassigned = doctor->unassignPatient(patient->getId());
+    // hospital.writeDoctorsData();
+
+    bool _isUnassigned = false;
+    if (from == 'd')
+    {
+        _isUnassigned = doctor->unassignPatient(patient->getId());
+        hospital.writeDoctorsData();
+    }
+    else if (from == 'n')
+    {
+        _isUnassigned = nurse->unassignPatient(patient->getId());
+        hospital.writeNursesData();
+    }
 
     std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
     std::cout << centerString(_isUnassigned ? "Patient unassigned successfully!" : "Patient not assigned!", MAX_WIDTH, false) << std::endl;
@@ -1072,3 +1142,386 @@ void unassignPatient()
     getch();
 }
 // ----------------------- DOCTOR FUNCTIONS END -----------------------
+
+// ----------------------- NURSE FUNCTIONS START -----------------------
+void nurseStartupMenu()
+{
+    const unsigned MAX_CHOICES = 3;
+    const unsigned MAX_LENGTH = 35;
+    int choice;
+    do
+    {
+        displayHeader();
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("Nurse Startup Menu") << std::endl;
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("1. Login", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("2. Register", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("3. Go Back to Main Menu", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Please enter your choice (1-3): ", MAX_LENGTH, false);
+
+        while (!(std::cin >> choice) || choice > MAX_CHOICES)
+        {
+            std::cout << std::endl
+                      << centerString("Invalid input. Please enter a valid choice: ");
+            // Clear error flag
+            std::cin.clear();
+            // Ignore the rest of the current input line up to newline
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+        switch (choice)
+        {
+        case 1:
+            loginNurse();
+            if (nurse != nullptr)
+            {
+                nurseMenu();
+            }
+            break;
+        case 2:
+            registerNurse();
+            loginNurse();
+            if (nurse != nullptr)
+            {
+                nurseMenu();
+            }
+            break;
+        case 3:
+            nurse = nullptr; // Reset the loggedin user
+            break;
+        }
+    } while (choice != MAX_CHOICES);
+}
+
+void loginNurse()
+{
+    displayHeader();
+    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("Nurse Login Menu") << std::endl;
+    std::cout << centerString("========================================================================================") << std::endl;
+
+    const unsigned MAX_LENGTH = 35;
+    char option = '\0';
+
+    int id;
+    std::string password;
+
+    do
+    {
+        std::cout << centerString("Enter your ID: ", MAX_LENGTH, false);
+        while (!(std::cin >> id))
+        {
+            std::cout << std::endl
+                      << centerString("Invalid input. Please enter a valid id: ");
+            // Clear error flag
+            std::cin.clear();
+            // Ignore the rest of the current input line up to newline
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+        std::cin.ignore();
+        std::cout << centerString("Enter your password: ", MAX_LENGTH, false);
+        std::getline(std::cin, password);
+
+        nurse = hospital.authenticateNurse(id, password);
+
+        if (nurse != nullptr)
+        {
+            std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+            std::cout << centerString("Login successful!", MAX_WIDTH, false) << std::endl;
+            std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+            getch();
+            break;
+            // std::cout << centerString("Welcome " + nurse->getName(), MAX_LENGTH, false) << std::endl;
+        }
+        else
+        {
+            std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+            std::cout << centerString("Login failed. Please try again.", MAX_WIDTH, false) << std::endl;
+            std::cout << centerString("Do you want to try again? (y/n): ", MAX_WIDTH, false);
+            std::cin >> option;
+        }
+    } while ((option != 'n' && option != 'N') && nurse == nullptr);
+}
+
+void registerNurse()
+{
+    displayHeader();
+    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("Nurse Registration Menu") << std::endl;
+    std::cout << centerString("========================================================================================") << std::endl;
+
+    const unsigned MAX_LENGTH = 35;
+
+    hospital.addNurse(MAX_LENGTH);
+
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Registration successful!", MAX_WIDTH, false) << std::endl;
+    std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+    getch();
+}
+
+void nurseMenu()
+{
+    const unsigned MAX_LENGTH = 35;
+    const unsigned MAX_CHOICES = 4;
+    int choice;
+    do
+    {
+        displayHeader();
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("Nurse Menu") << std::endl;
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("1. View Profile", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("2. Update Profile", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("3. View Assigned Patients", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("4. Go Back", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Please enter your choice (1-4): ", MAX_LENGTH, false);
+
+        while (!(std::cin >> choice) || choice > MAX_CHOICES)
+        {
+            std::cout << std::endl
+                      << centerString("Invalid input. Please enter a valid choice: ");
+            // Clear error flag
+            std::cin.clear();
+            // Ignore the rest of the current input line up to newline
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+        switch (choice)
+        {
+        case 1:
+            viewNurseProfile();
+            break;
+        case 2:
+            updateNurseProfile();
+            break;
+        case 3:
+            viewAssignedPatients('n');
+            break;
+        case 4:
+            nurse = nullptr; // Reset the loggedin user
+        }
+
+    } while (choice != MAX_CHOICES);
+}
+
+bool checkNurseIsNotNull(std::string str)
+{
+    if (nurse == nullptr)
+    {
+        std::cout << centerString("For this operation, you need to select a nurse first.") << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString(str, MAX_WIDTH, false) << std::endl;
+        std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+        getch();
+        return false;
+    }
+    return true;
+}
+
+void viewNurseProfile()
+{
+    displayHeader();
+    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("Nurse Profile") << std::endl;
+    std::cout << centerString("========================================================================================") << std::endl;
+
+    if (!checkNurseIsNotNull("Failed to view nurse profile!"))
+        return;
+
+    std::cout << *nurse;
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+    getch();
+}
+
+void updateNurseProfile()
+{
+    const unsigned MAX_LENGTH = 35;
+    displayHeader();
+    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("Update Nurse Profile") << std::endl;
+    std::cout << centerString("========================================================================================") << std::endl;
+    std::cout << centerString("OLD INFORMATION") << std::endl;
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+    std::cout << *nurse;
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("NEW INFORMATION") << std::endl;
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+
+    std::cin.ignore();
+    nurse->getInfoFromUser(MAX_LENGTH);
+    hospital.writeNursesData();
+
+    std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Profile updated successfully!", MAX_WIDTH, false) << std::endl;
+    std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+    getch();
+}
+
+void manageNursesMenu()
+{
+    const unsigned MAX_LENGTH = 35;
+    const unsigned MAX_CHOICES = 5;
+    int choice;
+    do
+    {
+        displayHeader();
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("Manage Nurses Menu") << std::endl;
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("1. View All Nurses", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("2. Select Nurse", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("3. View Selected Nurse", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("4. Manage Assigned Nurses", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("5. Go Back", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Please enter your choice (1-5): ", MAX_LENGTH, false);
+
+        while (!(std::cin >> choice) || choice > MAX_CHOICES)
+        {
+            std::cout << std::endl
+                      << centerString("Invalid input. Please enter a valid choice: ");
+            // Clear error flag
+            std::cin.clear();
+            // Ignore the rest of the current input line up to newline
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+        switch (choice)
+        {
+        case 1:
+            viewAllNurses();
+            break;
+        case 2:
+            selectNurse();
+            break;
+        case 3:
+            viewNurseProfile();
+            break;
+        case 4:
+            manageAssignedNursesMenu();
+            break;
+        case 5:
+            nurse = nullptr; // Reset the selected nurse
+        }
+
+    } while (choice != MAX_CHOICES);
+}
+
+void viewAllNurses()
+{
+    displayHeader(118);
+    std::cout << centerString("======================================================================================================================") << std::endl;
+    std::cout << centerString("All Nurses") << std::endl;
+    std::cout << centerString("======================================================================================================================") << std::endl;
+
+    if (hospital.getNurses().empty())
+    {
+        std::cout << centerString("No nurses found.") << std::endl;
+    }
+    else
+    {
+        std::cout << hospital.getNurses();
+    }
+
+    std::cout << centerString("----------------------------------------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Press any key to continue...", 118, false) << std::endl;
+    getch();
+}
+
+void selectNurse()
+{
+    displayHeader(118);
+    std::cout << centerString("======================================================================================================================") << std::endl;
+    std::cout << centerString("Select Nurse") << std::endl;
+    std::cout << centerString("======================================================================================================================") << std::endl;
+
+    if (hospital.getNurses().empty())
+    {
+        std::cout << centerString("No nurses found.") << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Press any key to continue...", MAX_WIDTH, false) << std::endl;
+        getch();
+        return;
+    }
+
+    std::cout << hospital.getNurses();
+    std::cout << centerString("----------------------------------------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Enter the ID of the nurse you want to select: ");
+
+    int id;
+    while (!(std::cin >> id) || hospital.findNurse(id) == nullptr)
+    {
+        std::cout << std::endl
+                  << centerString("Invalid input. Please enter a valid id: ");
+        // Clear error flag
+        std::cin.clear();
+        // Ignore the rest of the current input line up to newline
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
+    nurse = hospital.findNurse(id);
+
+    std::cout << centerString("----------------------------------------------------------------------------------------------------------------------") << std::endl;
+    std::cout << centerString("Nurse selected successfully!", 118, false) << std::endl;
+    std::cout << centerString("Press any key to continue...", 118, false) << std::endl;
+    getch();
+}
+
+void manageAssignedNursesMenu()
+{
+    const unsigned MAX_LENGTH = 35;
+    const unsigned MAX_CHOICES = 6;
+    int choice;
+    do
+    {
+        displayHeader();
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("Manage Assigned Nurses Menu") << std::endl;
+        std::cout << centerString("========================================================================================") << std::endl;
+        std::cout << centerString("1. View Assigned Patients", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("2. Select Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("3. View Selected Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("4. Assign Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("5. Unassign Patient", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("6. Go Back", MAX_LENGTH, false) << std::endl;
+        std::cout << centerString("----------------------------------------------------------------------------------------") << std::endl;
+        std::cout << centerString("Please enter your choice (1-6): ", MAX_LENGTH, false);
+
+        while (!(std::cin >> choice) || choice > MAX_CHOICES)
+        {
+            std::cout << std::endl
+                      << centerString("Invalid input. Please enter a valid choice: ");
+            // Clear error flag
+            std::cin.clear();
+            // Ignore the rest of the current input line up to newline
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
+        switch (choice)
+        {
+        case 1:
+            viewAssignedPatients('n');
+            break;
+        case 2:
+            selectPatient('n');
+            break;
+        case 3:
+            viewPatientProfile();
+            break;
+        case 4:
+            assignPatient('n');
+            break;
+        case 5:
+            unassignPatient('n');
+            break;
+        }
+
+    } while (choice != MAX_CHOICES);
+}
+// ----------------------- NURSE FUNCTIONS END -----------------------
