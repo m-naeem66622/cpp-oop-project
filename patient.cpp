@@ -7,21 +7,21 @@ std::ostream &operator<<(std::ostream &out, const Patient &patient)
     out << static_cast<const Person &>(patient);
 
     // Print the patient information
-    out << Patient::centerString("Blood Group: " + patient.bloodGroup, 35, false) << std::endl;
+    out << Util::centerString("Blood Group: " + patient.bloodGroup, 35, false) << std::endl;
     return out;
 }
 
 // Overload the << operator to print the vector of patients
 std::ostream &operator<<(std::ostream &out, const std::vector<Patient> &patients)
 {
-    out << Patient::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
-    out << Patient::centerString("| " + MedicalHistory::setPadding("ID", 3, 'c') + " | " + MedicalHistory::setPadding("Name", 20, 'c') + " | " + MedicalHistory::setPadding("Age", 3, 'c') + " | " + MedicalHistory::setPadding("Phone Number", 12, 'c') + " | " + MedicalHistory::setPadding("Blood Group", 11, 'c') + " | " + MedicalHistory::setPadding("Address", 34, 'l') + " |") << std::endl;
-    out << Patient::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
+    out << Util::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
+    out << Util::centerString("| " + Util::setPadding("ID", 3, 'c') + " | " + Util::setPadding("Name", 20, 'c') + " | " + Util::setPadding("Age", 3, 'c') + " | " + Util::setPadding("Phone Number", 12, 'c') + " | " + Util::setPadding("Blood Group", 11, 'c') + " | " + Util::setPadding("Address", 34, 'l') + " |") << std::endl;
+    out << Util::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
 
     for (const auto &patient : patients)
     {
-        out << Patient::centerString("| " + MedicalHistory::setPadding(std::to_string(patient.id), 3, 'c') + " | " + MedicalHistory::setPadding(patient.name, 20, 'l') + " | " + MedicalHistory::setPadding(std::to_string(patient.age), 3, 'c') + " | " + MedicalHistory::setPadding(patient.phoneNumber, 12, 'c') + " | " + MedicalHistory::setPadding(patient.bloodGroup, 11, 'c') + " | " + MedicalHistory::setPadding(patient.address, 34, 'l') + " |") << std::endl;
-        out << Patient::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
+        out << Util::centerString("| " + Util::setPadding(std::to_string(patient.id), 3, 'c') + " | " + Util::setPadding(patient.name, 20, 'l') + " | " + Util::setPadding(std::to_string(patient.age), 3, 'c') + " | " + Util::setPadding(patient.phoneNumber, 12, 'c') + " | " + Util::setPadding(patient.bloodGroup, 11, 'c') + " | " + Util::setPadding(patient.address, 34, 'l') + " |") << std::endl;
+        out << Util::centerString("+-----+----------------------+-----+--------------+-------------+------------------------------------+") << std::endl;
     }
     return out;
 }
@@ -47,17 +47,14 @@ MedicalHistory Patient::getMedicalHistoryFromUser(bool isNew = true)
         history.createdAt = current_date;
     history.lastUpdatedAt = current_date;
 
-    std::cout << centerString("Enter the current medications: ", 35, false);
+    std::cout << Util::centerString("Enter the current medications: ", 35, false);
     std::cin.ignore();
     std::getline(std::cin, history.currentMedications);
 
-    std::cout << centerString("Enter the allergies: ", 35, false);
+    std::cout << Util::centerString("Enter the allergies: ", 35, false);
     std::getline(std::cin, history.allergies);
 
-    // std::cout << centerString("Enter the doctor assigned: ", 35, false);
-    // std::getline(std::cin, history.doctorAssigned);
-
-    std::cout << centerString("Enter the room number: ", 35, false);
+    std::cout << Util::centerString("Enter the room number: ", 35, false);
     std::getline(std::cin, history.roomNumber);
 
     return history;
@@ -69,7 +66,7 @@ void Patient::getInfoFromUser(int MAX_LENGTH)
     // Call the base class function to get the common information
     Person::getInfoFromUser(MAX_LENGTH);
 
-    std::cout << centerString("Enter the blood group: ", MAX_LENGTH, false);
+    std::cout << Util::centerString("Enter the blood group: ", MAX_LENGTH, false);
     std::cin >> bloodGroup;
 }
 
@@ -145,16 +142,6 @@ MedicalHistory *Patient::removeMedicalHistory(int id)
 
     if (history == nullptr)
         return nullptr;
-
-    // Remove the medical history
-    // medicalHistory.erase(std::remove_if(medicalHistory.begin(), medicalHistory.end(), [id](const MedicalHistory &history) { return history.id == id; }), medicalHistory.end());
-
-    // auto it = std::find_if(medicalHistory.begin(), medicalHistory.end(), [id](const MedicalHistory &history) { return history.id == id; });
-    
-    // if (it != medicalHistory.end())
-    // {
-    //     medicalHistory.erase(it);
-    // }
 
     for (auto it = medicalHistory.begin(); it != medicalHistory.end(); ++it)
     {

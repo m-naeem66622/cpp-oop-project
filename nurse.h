@@ -1,5 +1,4 @@
-#ifndef NURSE_H
-#define NURSE_H
+#pragma once
 
 #include <vector>
 #include "person.h"
@@ -31,5 +30,3 @@ public:
     std::string getDepartment() const;
     std::vector<PatientAssigned> getPatientsAssigned() const;
 };
-
-#endif // NURSE_H

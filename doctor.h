@@ -1,5 +1,4 @@
-#ifndef DOCTOR_H
-#define DOCTOR_H
+#pragma once
 
 #include <vector>
 #include "person.h"
@@ -34,5 +33,3 @@ public:
     int getYearsOfExperience() const;
     std::vector<PatientAssigned> getPatientsAssigned() const;
 };
-
-#endif // DOCTOR_H

@@ -1,5 +1,4 @@
-#ifndef HOSPITAL_H
-#define HOSPITAL_H
+#pragma once
 
 #include "doctor.h"
 #include "patient.h"
@@ -43,14 +42,4 @@ public:
     Nurse findAndShowNurse(int id);
     Nurse *authenticateNurse(int id, std::string password);
     void writeNursesData();
-
-    std::string centerString(const std::string &str, int width = CONSOLE_WIDTH, bool center = true);
-
-    // void addRoom(); // TODO
-    // Room* findRoom(int id); // TODO
-
-    // void addAppointment(); // TODO
-    // Appointment* findAppointment(int id); // TODO
 };
-
-#endif // HOSPITAL_H

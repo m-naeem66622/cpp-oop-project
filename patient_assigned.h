@@ -1,5 +1,4 @@
-#ifndef PATIENT_ASSIGNED_H
-#define PATIENT_ASSIGNED_H
+#pragma once
 
 #include "date.h"
 #include "patient.h"
@@ -16,5 +15,3 @@ struct PatientAssigned
     friend std::ostream &operator<<(std::ostream &out, const PatientAssigned &patientAssigned);
     friend std::ostream &operator<<(std::ostream &out, const std::vector<PatientAssigned> &patientsAssigned);
 };
-
-#endif // PATIENT_ASSIGNED_H

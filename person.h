@@ -1,10 +1,8 @@
-#ifndef PERSON_H
-#define PERSON_H
-
-#define CONSOLE_WIDTH 148
+#pragma once
 
 #include <iostream>
 #include <string>
+#include "util.h"
 
 class Person
 {
@@ -24,9 +22,6 @@ public:
 
     void getInfoFromUser(int MAX_LENGTH);
 
-    static std::string centerString(const std::string &str, int width = CONSOLE_WIDTH, bool center = true);
-    friend std::string centerString(const std::string &str, int width, bool center);
-
     // Accessors
     int getId() const;
     std::string getName() const;
@@ -38,5 +33,3 @@ public:
 private:
     Person(); // Private default constructor
 };
-
-#endif // PERSON_H

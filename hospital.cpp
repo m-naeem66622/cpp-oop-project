@@ -1,7 +1,6 @@
 #include "hospital.h"
 #include <fstream>
 #include <sstream>
-#include <conio.h>
 
 Hospital::Hospital()
 {
@@ -38,8 +37,6 @@ void Hospital::readPatientsData()
                 continue;
 
             std::stringstream ss(line);
-            // Debugging
-            std::cout << "patientFile line: " << line << std::endl;
 
             std::string id, name, age, address, phoneNumber, bloodGroup, password;
             std::getline(ss, id, ',');
@@ -65,8 +62,6 @@ void Hospital::readPatientsData()
                     continue;
 
                 std::stringstream medicalHistorySS(medicalHistoryLine);
-                // Debugging
-                std::cout << "medicalHistoryLine: " << medicalHistoryLine << std::endl;
 
                 std::string historyId, patientId, currentMedications, allergies, doctorAssigned, roomNumber, createdAt, lastUpdatedAt;
                 std::getline(medicalHistorySS, historyId, ',');
@@ -98,8 +93,6 @@ void Hospital::readPatientsData()
     {
         std::cout << "Error: Unable to open the file." << std::endl;
     }
-
-    getch();
 }
 
 void Hospital::readDoctorsData()
@@ -245,11 +238,11 @@ void Hospital::addPatient(int MAX_LENGTH)
     int id = 1;
     if (!this->patients.empty())
         id = this->patients.back().getId() + 1;
-    std::cout << centerString("Patient ID: ", MAX_LENGTH, false) << id << std::endl;
+    std::cout << Util::centerString("Patient ID: ", MAX_LENGTH, false) << id << std::endl;
 
     std::string password;
     std::cin.ignore();
-    std::cout << centerString("Enter the password: ", MAX_LENGTH, false);
+    std::cout << Util::centerString("Enter the password: ", MAX_LENGTH, false);
     std::getline(std::cin, password);
 
     Patient patient(id, password);
@@ -337,11 +330,11 @@ void Hospital::addDoctor(int MAX_LENGTH)
     int id = 1;
     if (!this->doctors.empty())
         id = this->doctors.back().getId() + 1;
-    std::cout << centerString("Patient ID: ", MAX_LENGTH, false) << id << std::endl;
+    std::cout << Util::centerString("Patient ID: ", MAX_LENGTH, false) << id << std::endl;
 
     std::string password;
     std::cin.ignore();
-    std::cout << centerString("Enter the password: ", MAX_LENGTH, false);
+    std::cout << Util::centerString("Enter the password: ", MAX_LENGTH, false);
     std::getline(std::cin, password);
 
     Doctor doctor(id, password);
@@ -424,11 +417,11 @@ void Hospital::addNurse(int MAX_LENGTH)
     int id = 1;
     if (!this->nurses.empty())
         id = this->nurses.back().getId() + 1;
-    std::cout << centerString("Nurse ID: ", MAX_LENGTH, false) << id << std::endl;
+    std::cout << Util::centerString("Nurse ID: ", MAX_LENGTH, false) << id << std::endl;
 
     std::string password;
     std::cin.ignore();
-    std::cout << centerString("Enter the password: ", MAX_LENGTH, false);
+    std::cout << Util::centerString("Enter the password: ", MAX_LENGTH, false);
     std::getline(std::cin, password);
 
     Nurse nurse(id, password);
@@ -509,52 +502,3 @@ void Hospital::writeNursesData()
     }
 }
 // -------------------------------- NURSE FUNCTIONS END --------------------------------
-
-// void Hospital::addRoom()
-// {
-//     Room room(this->rooms.back().getId() + 1);
-//     room.getInfoFromUser();
-//     this->rooms.push_back(room);
-// }
-
-// void Hospital::addAppointment()
-// {
-//     Appointment appointment(this->appointments.back().getId() + 1);
-//     appointment.getInfoFromUser();
-//     this->appointments.push_back(appointment);
-// }
-
-// Room* Hospital::findRoom(int id)
-// {
-//     for (auto &room : this->rooms)
-//     {
-//         if (room.getId() == id)
-//         {
-//             return &room;
-//         }
-//     }
-//     return nullptr;
-// }
-
-// Appointment* Hospital::findAppointment(int id)
-// {
-//     for (auto &appointment : this->appointments)
-//     {
-//         if (appointment.getId() == id)
-//         {
-//             return &appointment;
-//         }
-//     }
-//     return nullptr;
-// }
-
-std::string Hospital::centerString(const std::string &str, int width, bool center)
-{
-    int padLen = center ? (width - str.length()) / 2 : (CONSOLE_WIDTH - (str.length() + (width - str.length()))) / 2;
-    if (padLen < 0)
-    {
-        padLen = 0;
-    }
-    std::string padding(padLen, ' ');
-    return padding + str;
-}

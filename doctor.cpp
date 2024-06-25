@@ -8,10 +8,10 @@ std::ostream &operator<<(std::ostream &out, const Doctor &doctor)
     out << static_cast<const Person &>(doctor);
 
     // Print the doctor information
-    out << Doctor::centerString("Specialization: " + doctor.specialization, 35, false) << std::endl;
-    out << Doctor::centerString("Qualifications: " + doctor.qualifications, 35, false) << std::endl;
-    out << Doctor::centerString("Years of Experience: " + std::to_string(doctor.yearsOfExperience), 35, false) << std::endl;
-    out << Doctor::centerString("Patients Assigned: " + std::to_string(doctor.patientsAssigned.size()), 35, false) << std::endl;
+    out << Util::centerString("Specialization: " + doctor.specialization, 35, false) << std::endl;
+    out << Util::centerString("Qualifications: " + doctor.qualifications, 35, false) << std::endl;
+    out << Util::centerString("Years of Experience: " + std::to_string(doctor.yearsOfExperience), 35, false) << std::endl;
+    out << Util::centerString("Patients Assigned: " + std::to_string(doctor.patientsAssigned.size()), 35, false) << std::endl;
     return out;
 }
 
@@ -26,17 +26,17 @@ void Doctor::getInfoFromUser(int MAX_LENGTH)
 {
     Person::getInfoFromUser(MAX_LENGTH);
 
-    std::cout << centerString("Enter the specialization: ", MAX_LENGTH, false);
+    std::cout << Util::centerString("Enter the specialization: ", MAX_LENGTH, false);
     std::getline(std::cin, specialization);
 
-    std::cout << centerString("Enter the qualifications: ", MAX_LENGTH, false);
+    std::cout << Util::centerString("Enter the qualifications: ", MAX_LENGTH, false);
     std::getline(std::cin, qualifications);
 
-    std::cout << centerString("Enter the years of experience: ", MAX_LENGTH, false);
+    std::cout << Util::centerString("Enter the years of experience: ", MAX_LENGTH, false);
     while (!(std::cin >> yearsOfExperience) || yearsOfExperience < 0)
     {
         std::cout << std::endl
-                  << centerString("Invalid input. Please enter a valid experience: ", MAX_LENGTH, false);
+                  << Util::centerString("Invalid input. Please enter a valid experience: ", MAX_LENGTH, false);
         // Clear error flag
         std::cin.clear();
         // Ignore the rest of the current input line up to newline

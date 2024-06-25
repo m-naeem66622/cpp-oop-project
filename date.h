@@ -1,5 +1,4 @@
-#ifndef DATE_H
-#define DATE_H
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -22,5 +21,3 @@ public:
 
     friend std::ostream &operator<<(std::ostream &out, const Date &date);
 };
-
-#endif // DATE_H

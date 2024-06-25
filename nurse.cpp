@@ -7,22 +7,22 @@ std::ostream &operator<<(std::ostream &out, const Nurse &nurse)
     out << static_cast<const Person &>(nurse);
 
     // Print the nurse information
-    out << Nurse::centerString("Department: " + nurse.department, 35, false) << std::endl;
-    out << Nurse::centerString("Patients Assigned: " + std::to_string(nurse.patientsAssigned.size()), 35, false) << std::endl;
+    out << Util::centerString("Department: " + nurse.department, 35, false) << std::endl;
+    out << Util::centerString("Patients Assigned: " + std::to_string(nurse.patientsAssigned.size()), 35, false) << std::endl;
     return out;
 }
 
 // Overload the stream insertion operator
 std::ostream &operator<<(std::ostream &out, const std::vector<Nurse> &nurses)
 {
-    out << Nurse::centerString("+-----+----------------------+-----+--------------+----------------------+-----------------------------------+") << std::endl;
-    out << Nurse::centerString("| " + MedicalHistory::setPadding("ID", 3, 'c') + " | " + MedicalHistory::setPadding("Name", 20, 'c') + " | " + MedicalHistory::setPadding("Age", 3, 'c') + " | " + MedicalHistory::setPadding("Phone Number", 12, 'c') + " | " + MedicalHistory::setPadding("Department", 20, 'c') + " | " + MedicalHistory::setPadding("Address", 33, 'l') + " |") << std::endl;
-    out << Nurse::centerString("+-----+----------------------+-----+--------------+----------------------+-----------------------------------+") << std::endl;
+    out << Util::centerString("+-----+----------------------+-----+--------------+----------------------+-----------------------------------+") << std::endl;
+    out << Util::centerString("| " + Util::setPadding("ID", 3, 'c') + " | " + Util::setPadding("Name", 20, 'c') + " | " + Util::setPadding("Age", 3, 'c') + " | " + Util::setPadding("Phone Number", 12, 'c') + " | " + Util::setPadding("Department", 20, 'c') + " | " + Util::setPadding("Address", 33, 'l') + " |") << std::endl;
+    out << Util::centerString("+-----+----------------------+-----+--------------+----------------------+-----------------------------------+") << std::endl;
 
     for (const auto &nurse : nurses)
     {
-        out << Nurse::centerString("| " + MedicalHistory::setPadding(std::to_string(nurse.id), 3, 'c') + " | " + MedicalHistory::setPadding(nurse.name, 20, 'l') + " | " + MedicalHistory::setPadding(std::to_string(nurse.age), 3, 'c') + " | " + MedicalHistory::setPadding(nurse.phoneNumber, 12, 'c') + " | " + MedicalHistory::setPadding(nurse.department, 20, 'c') + " | " + MedicalHistory::setPadding(nurse.address, 33, 'l') + " |") << std::endl;
-        out << Nurse::centerString("+-----+----------------------+-----+--------------+----------------------+-----------------------------------+") << std::endl;
+        out << Util::centerString("| " + Util::setPadding(std::to_string(nurse.id), 3, 'c') + " | " + Util::setPadding(nurse.name, 20, 'l') + " | " + Util::setPadding(std::to_string(nurse.age), 3, 'c') + " | " + Util::setPadding(nurse.phoneNumber, 12, 'c') + " | " + Util::setPadding(nurse.department, 20, 'c') + " | " + Util::setPadding(nurse.address, 33, 'l') + " |") << std::endl;
+        out << Util::centerString("+-----+----------------------+-----+--------------+----------------------+-----------------------------------+") << std::endl;
     }
     return out;
 }
@@ -39,7 +39,7 @@ void Nurse::getInfoFromUser(int MAX_LENGTH)
     Person::getInfoFromUser(MAX_LENGTH);
 
     // std::cin.ignore();
-    std::cout << centerString("Enter the department: ", MAX_LENGTH, false);
+    std::cout << Util::centerString("Enter the department: ", MAX_LENGTH, false);
     std::getline(std::cin, department);
 }
 
