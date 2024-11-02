@@ -1,1 +1,1 @@
-g++ main.cpp date.cpp medical_history.cpp util.cpp person.cpp patient_assigned.cpp patient.cpp doctor.cpp nurse.cpp hospital.cpp user_interface.cpp -o main
+g++ -o bin/main src/hospital.cpp src/patient.cpp src/doctor.cpp src/nurse.cpp src/person.cpp src/user_interface.cpp src/util.cpp src/date.cpp src/medical_history.cpp src/patient_assigned.cpp main.cpp -I include

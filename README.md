@@ -3,6 +3,7 @@
 This Hospital Management System is a comprehensive project designed to manage various aspects of a hospital's operations, including patient, doctor, and nurse management. It is implemented in C++ and provides functionalities for reading and writing patient, doctor, and nurse data to CSV files, authenticating users, and managing medical histories.
 
 ## Features
+
 - **Patient Management:** Add, find, authenticate, and manage patient information along with their medical history.
 - **Doctor and Nurse Management:** Add, find, and authenticate doctors and nurses. Assign them to patients and manage their profiles.
 - **Medical History Tracking:** Keep track of patients' medical histories, including medications, allergies, doctor assignments, and room numbers.
@@ -33,14 +34,20 @@ The project consists of the following key components:
 
 ## Compilation and Execution
 
-To compile the project, use the provided PowerShell script [script.ps1](./script.ps1). This script compiles all necessary source files and generates an executable named `main`.
+To compile the project, first create the `bin` directory if it doesn't exist:
 
-```powershell
+```bash
+mkdir -p bin
+```
+
+Then, use the provided PowerShell script [script.ps1](./script.ps1). This script compiles all necessary source files and generates an executable named main:
+
+```bash
 ./script.ps1
 ```
 
-To run the project, simply execute the compiled main executable:
+To run the project, simply execute the compiled main executable
 
 ```bash
-./main
+./bin/main.exe
 ```
